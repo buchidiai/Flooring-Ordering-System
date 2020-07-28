@@ -11,4 +11,28 @@ package com.aspire.flooringmastery.ui;
  */
 public class FlooringMasteryView {
 
+    UserIO io;
+
+    public FlooringMasteryView(UserIO io) {
+        this.io = io;
+    }
+
+    public int printMenuAndGetSelection() {
+
+        io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+        io.print("*  <<Flooring Program>>");
+        io.print("* 1. Display Orders");
+        io.print("* 2. Add an Order");
+        io.print("* 3. Edit an Order");
+        io.print("* 4. Remove an Order");
+        io.print("* 5. Export All Data");
+        io.print("* 6. Quit");
+        io.print("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+
+        int option = io.readInt("Please pick an option: ", 1, 6);
+
+        return option;
+
+    }
+
 }

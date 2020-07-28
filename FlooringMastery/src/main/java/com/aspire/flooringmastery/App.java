@@ -5,6 +5,11 @@
  */
 package com.aspire.flooringmastery;
 
+import com.aspire.flooringmastery.controller.FlooringMasteryController;
+import com.aspire.flooringmastery.ui.FlooringMasteryView;
+import com.aspire.flooringmastery.ui.UserIO;
+import com.aspire.flooringmastery.ui.UserIOConsoleImpl;
+
 /**
  *
  * @author louie
@@ -12,6 +17,13 @@ package com.aspire.flooringmastery;
 public class App {
 
     public static void main(String[] args) {
+
+        UserIO io = new UserIOConsoleImpl();
+
+        FlooringMasteryView view = new FlooringMasteryView(io);
+
+        FlooringMasteryController controller = new FlooringMasteryController(view);
+        controller.run();
 
     }
 }
