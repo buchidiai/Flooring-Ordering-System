@@ -5,6 +5,7 @@
  */
 package com.aspire.flooringmastery.ui;
 
+import com.aspire.flooringmastery.util.Util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -174,8 +175,60 @@ public class UserIOConsoleImpl implements UserIO {
                     //validate date
                     LocalDate orderDate = LocalDate.of(year, month, day);
 
-                    response = response.replaceAll("/", "").trim();
+                    //today.
+                    isValid = false;
+                }
+            } catch (Exception e) {
+                //add invalid date exception
+                this.print("Please enter the correct date format");
+                continue;
+            }
+        }
+        return response;
+    }
 
+    @Override
+    public String readDateForOrders(String Prompt) {
+
+        boolean isValid = true;
+        int month = 0;
+        int day = 0;
+        int year = 0;
+        String response = "";
+
+        String[] results = new String[3];
+
+        while (isValid) {
+            response = this.readString(Prompt);
+            try {
+
+                if (!(response.contains("/"))) {
+                    this.print("Please enter the correct date format");
+                    continue;
+                } else if (response.contains("/")) {
+                    results = response.split("/");
+                }
+
+                if (results.length != 3) {
+                    this.print("Please enter the correct date format");
+                    continue;
+                } else {
+
+                    month = Integer.parseInt(results[0]);
+                    day = Integer.parseInt(results[1]);
+                    year = Integer.parseInt(results[2]);
+
+                    LocalDate today = LocalDate.now();
+
+                    //validate date
+                    LocalDate orderDate = LocalDate.of(year, month, day);
+
+                    if (orderDate.isEqual(today)) {
+                        this.print("Orders can't be placed on same day basis, Please try " + Util.formatDate(today, 1) + " or a later date.");
+                        continue;
+                    }
+
+                    //today.
                     isValid = false;
                 }
             } catch (Exception e) {

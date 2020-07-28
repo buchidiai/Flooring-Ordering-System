@@ -5,7 +5,11 @@
  */
 package com.aspire.flooringmastery.controller;
 
+import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
+import com.aspire.flooringmastery.model.Order;
+import com.aspire.flooringmastery.service.FlooringMasteryServiceLayer;
 import com.aspire.flooringmastery.ui.FlooringMasteryView;
+import java.util.List;
 
 /**
  *
@@ -14,45 +18,52 @@ import com.aspire.flooringmastery.ui.FlooringMasteryView;
 public class FlooringMasteryController {
 
     private FlooringMasteryView view;
+    private FlooringMasteryServiceLayer service;
 
-    public FlooringMasteryController(FlooringMasteryView view) {
+    public FlooringMasteryController(FlooringMasteryView view, FlooringMasteryServiceLayer service) {
         this.view = view;
+        this.service = service;
     }
 
     public void run() {
         boolean keepGoing = true;
         int menuSelection = 0;
 
-        while (keepGoing) {
+        try {
+            while (keepGoing) {
 
-            menuSelection = getMenuSelection();
+                menuSelection = getMenuSelection();
 
-            switch (menuSelection) {
-                case 1:
-                    displayOrder();
-                    break;
-                case 2:
-                    addOrder();
+                switch (menuSelection) {
+                    case 1:
+                        displayOrder();
+                        break;
+                    case 2:
+                        addOrder();
 
-                    break;
-                case 3:
-                    editOrder();
-                    break;
-                case 4:
-                    removeOrder();
+                        break;
+                    case 3:
+                        editOrder();
+                        break;
+                    case 4:
+                        removeOrder();
 
-                    break;
-                case 5:
-                    exportAllData();
+                        break;
+                    case 5:
+                        exportAllData();
 
-                    break;
-                case 6:
-                    keepGoing = false;
-                    break;
-                default:
-                    unknownCommand();
+                        break;
+                    case 6:
+                        keepGoing = false;
+                        break;
+                    default:
+                        unknownCommand();
+                }
+
             }
 
+        } catch (FlooringMasteryPersistenceException e) {
+            showErrorMsg(e.getMessage());
         }
         exitMessage();
     }
@@ -62,12 +73,21 @@ public class FlooringMasteryController {
         return view.printMenuAndGetSelection();
     }
 
-    private void displayOrder() {
-        System.out.println("display orders");
+    private void displayOrder() throws FlooringMasteryPersistenceException {
+        view.displayAllOrdersBanner();
 
-        String date = view.getDate();
+        String date = view.getOrderDate();
 
-        System.out.println("Date " + date);
+        //      String date = "07122020";
+        List<Order> allOrders = service.getAllOrders(date);
+
+        int orderSize = allOrders.size();
+
+        view.displayQuerying(date, orderSize);
+
+        if (orderSize != 0) {
+            view.displayAllOrder(allOrders);
+        }
 
     }
 
@@ -93,6 +113,10 @@ public class FlooringMasteryController {
 
     private void exitMessage() {
         System.out.println("goodbye");
+    }
+
+    private void showErrorMsg(String errorMsg) {
+        view.displayErrorMessage(errorMsg);
     }
 
 }

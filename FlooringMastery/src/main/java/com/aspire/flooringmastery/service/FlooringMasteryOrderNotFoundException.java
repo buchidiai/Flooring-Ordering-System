@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.aspire.flooringmastery.dao;
+package com.aspire.flooringmastery.service;
 
 /**
  *
  * @author louie
  */
-public class FlooringMasteryPersistenceException extends Exception {
+public class FlooringMasteryOrderNotFoundException extends Exception {
 
-    public FlooringMasteryPersistenceException(String message) {
+    public FlooringMasteryOrderNotFoundException(String message) {
         super(message);
     }
 
-    public FlooringMasteryPersistenceException(String message, Throwable cause) {
+    public FlooringMasteryOrderNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 

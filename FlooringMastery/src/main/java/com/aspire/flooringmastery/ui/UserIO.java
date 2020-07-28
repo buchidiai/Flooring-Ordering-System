@@ -25,4 +25,6 @@ public interface UserIO {
 
     String readDate(String Prompt);
 
+    String readDateForOrders(String Prompt);
+
 }

@@ -6,6 +6,8 @@
 package com.aspire.flooringmastery.util;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 /**
@@ -14,10 +16,32 @@ import java.util.regex.Pattern;
  */
 public class Util {
 
+    public static String formatDate(LocalDate date, int daysToAdd) {
+
+        return date.plusDays(daysToAdd).format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+    }
+
+    public static String cleanDate(String str) {
+
+        return str.replaceAll("/", "").trim();
+
+    }
+
+    public static String formatDate(LocalDate date) {
+
+        return date.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+    }
+
     public static String replaceSpecialCharacters(String str) {
 
-        return str.replaceAll("[^a-zA-Z0-9\\s+]", "").trim();
+        return str.replaceAll("^[a-zA-Z0-9,.!? ]*$", "").trim();
 
+    }
+
+    public static String BigDecimalToString(BigDecimal big) {
+        return "" + big;
     }
 
     public static String appendToMoney(BigDecimal money) {

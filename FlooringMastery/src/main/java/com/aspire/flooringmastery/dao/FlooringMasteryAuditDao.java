@@ -5,10 +5,13 @@
  */
 package com.aspire.flooringmastery.dao;
 
+import com.aspire.flooringmastery.model.Order;
+
 /**
  *
  * @author louie
  */
 public interface FlooringMasteryAuditDao {
 
+    public void writeAuditEntry(Order order) throws FlooringMasteryPersistenceException;
 }

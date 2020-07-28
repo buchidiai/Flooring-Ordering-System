@@ -16,7 +16,7 @@ public interface FlooringMasteryOrderDao {
 
     Order addOrder(Order orderDetail);
 
-    Order editOrder(Order OrderNumber);
+    Order editOrder(Integer OrderNumber);
 
     boolean removeOrder(Integer OrderNumber);
 
@@ -24,6 +24,6 @@ public interface FlooringMasteryOrderDao {
 
     Order getOrder(String OrderNumber);
 
-    List<Order> getAllOrders(String OrderNumber);
+    List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException;
 
 }
