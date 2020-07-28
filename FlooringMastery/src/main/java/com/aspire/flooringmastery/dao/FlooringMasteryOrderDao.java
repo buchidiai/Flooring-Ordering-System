@@ -5,10 +5,25 @@
  */
 package com.aspire.flooringmastery.dao;
 
+import com.aspire.flooringmastery.model.Order;
+import java.util.List;
+
 /**
  *
  * @author louie
  */
 public interface FlooringMasteryOrderDao {
+
+    Order addOrder(Order orderDetail);
+
+    Order editOrder(Order OrderNumber);
+
+    boolean removeOrder(Integer OrderNumber);
+
+    void exportOrder();
+
+    Order getOrder(String OrderNumber);
+
+    List<Order> getAllOrders(String OrderNumber);
 
 }
