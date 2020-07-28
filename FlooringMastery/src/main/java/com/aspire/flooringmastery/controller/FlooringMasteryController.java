@@ -64,6 +64,11 @@ public class FlooringMasteryController {
 
     private void displayOrder() {
         System.out.println("display orders");
+
+        String date = view.getDate();
+
+        System.out.println("Date " + date);
+
     }
 
     private void addOrder() {

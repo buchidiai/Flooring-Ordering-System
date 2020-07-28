@@ -35,4 +35,10 @@ public class FlooringMasteryView {
 
     }
 
+    public String getDate() {
+
+        String dateString = io.readDate("Please enter an Order Date: e.g 05/13/2020 - MM/DD/YYYY");
+        return dateString;
+    }
+
 }

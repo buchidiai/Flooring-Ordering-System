@@ -7,6 +7,7 @@ package com.aspire.flooringmastery.ui;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 /**
@@ -137,6 +138,53 @@ public class UserIOConsoleImpl implements UserIO {
         }
 
         return result;
+    }
+
+    @Override
+    public String readDate(String Prompt) {
+
+        boolean isValid = true;
+        int month = 0;
+        int day = 0;
+        int year = 0;
+        String response = "";
+
+        String[] results = new String[3];
+
+        while (isValid) {
+            response = this.readString(Prompt);
+            try {
+
+                if (!(response.contains("/"))) {
+                    this.print("Please enter the correct date format");
+                    continue;
+                } else if (response.contains("/")) {
+                    results = response.split("/");
+                }
+
+                if (results.length != 3) {
+                    this.print("Please enter the correct date format");
+                    continue;
+                } else {
+
+                    month = Integer.parseInt(results[0]);
+                    day = Integer.parseInt(results[1]);
+                    year = Integer.parseInt(results[2]);
+
+                    //validate date
+                    LocalDate orderDate = LocalDate.of(year, month, day);
+
+                    response = response.replaceAll("/", "").trim();
+
+                    isValid = false;
+                }
+            } catch (Exception e) {
+                //add invalid date exception
+                this.print("Please enter the correct date format");
+                continue;
+            }
+        }
+        return response;
     }
 
 }

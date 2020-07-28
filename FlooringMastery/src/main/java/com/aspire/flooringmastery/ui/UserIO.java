@@ -23,4 +23,6 @@ public interface UserIO {
 
     BigDecimal readBigDecimal(String prompt);
 
+    String readDate(String Prompt);
+
 }
