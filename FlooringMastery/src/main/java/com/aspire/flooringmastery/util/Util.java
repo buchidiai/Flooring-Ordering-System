@@ -36,7 +36,7 @@ public class Util {
 
     public static String replaceSpecialCharacters(String str) {
 
-        return str.replaceAll("^[a-zA-Z0-9,.!? ]*$", "").trim();
+        return str.replaceAll("/[^,;a-zA-Z0-9_-]|[,;]$/s", "").trim();
 
     }
 

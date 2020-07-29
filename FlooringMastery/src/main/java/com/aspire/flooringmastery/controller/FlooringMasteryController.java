@@ -7,6 +7,9 @@ package com.aspire.flooringmastery.controller;
 
 import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.model.Order;
+import com.aspire.flooringmastery.model.OrderDetail;
+import com.aspire.flooringmastery.model.Product;
+import com.aspire.flooringmastery.service.FlooringMasteryCustomerNameException;
 import com.aspire.flooringmastery.service.FlooringMasteryServiceLayer;
 import com.aspire.flooringmastery.ui.FlooringMasteryView;
 import java.util.List;
@@ -62,7 +65,7 @@ public class FlooringMasteryController {
 
             }
 
-        } catch (FlooringMasteryPersistenceException e) {
+        } catch (FlooringMasteryCustomerNameException | FlooringMasteryPersistenceException e) {
             showErrorMsg(e.getMessage());
         }
         exitMessage();
@@ -76,23 +79,45 @@ public class FlooringMasteryController {
     private void displayOrder() throws FlooringMasteryPersistenceException {
         view.displayAllOrdersBanner();
 
-        String date = view.getOrderDate();
+        //get date of order
+        String date = view.getOrderDateToDisplayAllOrders();
 
-        //      String date = "07122020";
+        //get all orders from file
         List<Order> allOrders = service.getAllOrders(date);
 
+        //order size
         int orderSize = allOrders.size();
 
+        //display results
         view.displayQuerying(date, orderSize);
 
         if (orderSize != 0) {
-            view.displayAllOrder(allOrders);
+            view.displayAllOrders(allOrders);
         }
 
     }
 
-    private void addOrder() {
-        System.out.println("add orders");
+    private void addOrder() throws FlooringMasteryPersistenceException, FlooringMasteryCustomerNameException {
+        view.displayAddOrderBanner();
+
+        //get date of order
+        // String date = view.getOrderDate();
+        String date = "07/23/1991";
+
+        List<Product> allProducts = service.getAllProducts();
+
+        if (allProducts.size() == 0) {
+
+            view.displayOutOfProducts();
+
+        } else {
+
+            OrderDetail orderDetails = view.getOrderDetails(date, allProducts);
+
+            service.addOrder(orderDetails);
+
+        }
+
     }
 
     private void editOrder() {

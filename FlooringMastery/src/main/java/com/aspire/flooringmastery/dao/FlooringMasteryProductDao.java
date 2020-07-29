@@ -5,10 +5,17 @@
  */
 package com.aspire.flooringmastery.dao;
 
+import com.aspire.flooringmastery.model.Product;
+import java.util.List;
+
 /**
  *
  * @author louie
  */
 public interface FlooringMasteryProductDao {
+
+    Product getProduct(String productType) throws FlooringMasteryPersistenceException;
+
+    List<Product> getAllProducts() throws FlooringMasteryPersistenceException;
 
 }

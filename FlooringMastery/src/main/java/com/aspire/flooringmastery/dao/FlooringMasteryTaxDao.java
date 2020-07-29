@@ -5,10 +5,17 @@
  */
 package com.aspire.flooringmastery.dao;
 
+import com.aspire.flooringmastery.model.Tax;
+import java.util.List;
+
 /**
  *
  * @author louie
  */
-public class FlooringMasteryStateTaxDaoImpl {
+public interface FlooringMasteryTaxDao {
+
+    List<Tax> getAllTaxes();
+
+    Tax getTax();
 
 }

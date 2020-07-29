@@ -10,6 +10,8 @@ import com.aspire.flooringmastery.dao.FlooringMasteryAuditDao;
 import com.aspire.flooringmastery.dao.FlooringMasteryAuditDaoImpl;
 import com.aspire.flooringmastery.dao.FlooringMasteryOrderDao;
 import com.aspire.flooringmastery.dao.FlooringMasteryOrderDaoImpl;
+import com.aspire.flooringmastery.dao.FlooringMasteryProductDao;
+import com.aspire.flooringmastery.dao.FlooringMasteryProductDaoImpl;
 import com.aspire.flooringmastery.service.FlooringMasteryServiceLayer;
 import com.aspire.flooringmastery.service.FlooringMasteryServiceLayerImpl;
 import com.aspire.flooringmastery.ui.FlooringMasteryView;
@@ -36,8 +38,11 @@ public class App {
         //Declare a FlooringMasteryOrderDao variable and initialize it with a FlooringMasteryOrderDaoFileImpl reference.
         FlooringMasteryOrderDao myOrderDao = new FlooringMasteryOrderDaoImpl();
 
+        //Declare a FlooringMasteryProductDao variable and initialize it with a FlooringMasteryProductDaoFileImpl reference.
+        FlooringMasteryProductDao myProductDao = new FlooringMasteryProductDaoImpl();
+
         //Instantiate a FlooringMasteryServiceLayer, passing the FlooringMasteryOrderDao and FlooringMasteryAuditDai object into the constructor.
-        FlooringMasteryServiceLayer serverLayer = new FlooringMasteryServiceLayerImpl(myOrderDao, myAudit);
+        FlooringMasteryServiceLayer serverLayer = new FlooringMasteryServiceLayerImpl(myOrderDao, myProductDao, myAudit);
 
         //Instantiate a FlooringMasteryController, passing the FlooringMasteryDao and FlooringMasteryView object into the constructor.
         FlooringMasteryController controller = new FlooringMasteryController(myView, serverLayer);

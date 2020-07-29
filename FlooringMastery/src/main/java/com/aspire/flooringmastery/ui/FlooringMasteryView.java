@@ -6,7 +6,10 @@
 package com.aspire.flooringmastery.ui;
 
 import com.aspire.flooringmastery.model.Order;
+import com.aspire.flooringmastery.model.OrderDetail;
+import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.util.Util;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -39,9 +42,15 @@ public class FlooringMasteryView {
 
     }
 
-    public String getOrderDate() {
+    public String getOrderDateToDisplayAllOrders() {
 
         String orderDate = io.readDate("Please enter an Order Date: e.g 05/13/2020 - MM/DD/YYYY");
+        return orderDate;
+    }
+
+    public String getOrderDate() {
+
+        String orderDate = io.readDateForOrders("Please enter an Order Date: e.g 05/13/2020 - MM/DD/YYYY");
         return orderDate;
     }
 
@@ -49,6 +58,8 @@ public class FlooringMasteryView {
         displaySpace();
 
         io.print("Querying orders for " + date);
+
+        displayDots();
 
         io.print(size + " results were found");
 
@@ -65,13 +76,85 @@ public class FlooringMasteryView {
 
     }
 
+    public OrderDetail getOrderDetails(String date, List<Product> allProducts) {
+
+        //ask first name
+        String customerName = io.readString("Please enter Customer name: e.g - Acme, Inc.  ");
+
+        //ask state
+        String state = io.readString("Please enter State: e.g - TX  ").toUpperCase();
+        //ask for Product
+        Product productType = getProductType(allProducts);
+        // ask area
+        BigDecimal area = io.readBigDecimal("Please enter an Area:  e.g 200");
+
+        return new OrderDetail(customerName, state, productType, area);
+    }
+
+    public Product getProductType(List<Product> allProducts) {
+
+        displayProducts(allProducts);
+
+        int productIndex = io.readInt("Please select a product", 1, allProducts.size());
+
+        return allProducts.get(productIndex);
+
+    }
+
+    public void displayProducts(List<Product> products) {
+        //display header for fields
+        io.print("___________________________________________________");
+        System.out.printf("|%5s|%13s|%10s|%8s| \n", "Choice", "ProductType", "CostPerSqFt", "LaborCostPerSqFt");
+        io.print("---------------------------------------------------");
+        //initiize product
+        Product p;
+
+        for (int i = 0; i < products.size(); i++) {
+            //set product in array
+            p = products.get(i);
+            //display projecy
+            displayProducts(i, p.getProductType(), p.getLaborCostPerSquareFoot(), p.getLaborCostPerSquareFoot());
+        }
+        displaySpace();
+
+    }
+
+    public void displayOutOfProducts() {
+        io.print("Sorry we are out of products at the moment try again");
+        displaySpace();
+        io.readString("Press Enter to go to Main Menu.");
+
+    }
+
+    private void displayProducts(int index, String ProductType, BigDecimal CostPerSqFt, BigDecimal LaborCostPerSqFt) {
+
+        //display products formatted
+        System.out.printf("|%-6d|%13s|%11s|%16s|  \n", index + 1, ProductType, Util.appendToMoney(CostPerSqFt), Util.appendToMoney(LaborCostPerSqFt));
+    }
+
+    public void displayDots() {
+        String dot = ".";
+
+        for (int i = 0; i < 5; i++) {
+            io.print(dot);
+
+            if (i == 5) {
+                dot += "\n";
+
+            }
+
+            dot += "..";
+
+        }
+    }
+
     public Integer getOrderNumber() {
 
         int orderNumber = io.readInt("Please enter an Order Number: e.g 32");
         return orderNumber;
     }
 
-    public void displayAllOrder(List<Order> orders) {
+    public void displayAllOrders(List<Order> orders) {
         //display header for fields
         io.print("_______________________________________________________________________________________________________________________________________________________");
         System.out.printf("|%5s|%18s|%5s|%10s|%10s|%10s|%12s|%12s|%10s|%13s|%10s|%10s \n", "OrderNumber", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
@@ -95,7 +178,7 @@ public class FlooringMasteryView {
         displaySpace();
     }
 
-    public void displayOrders(Order order) {
+    private void displayOrders(Order order) {
 
         Integer orderNumber = order.getOrderNumber();
         String customerName = order.getCustomerName();
@@ -129,6 +212,14 @@ public class FlooringMasteryView {
         io.print("*******************************************");
         io.print("*******************************************");
         io.print("*********** Display All Orders ************");
+        displaySpace();
+
+    }
+
+    public void displayAddOrderBanner() {
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("*********** Add An order ************");
         displaySpace();
 
     }

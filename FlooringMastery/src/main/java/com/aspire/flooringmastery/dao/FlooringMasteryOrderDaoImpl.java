@@ -22,7 +22,6 @@ import java.util.Scanner;
  */
 public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
-    private String ORDER_FILE_DAY;
     private final String ORDER_FOLDER;
     private static final String DELIMITER = ",";
     public static final int NUMBER_OF_FIELDS = 12;
@@ -34,9 +33,10 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     }
 
-//    public FlooringMasteryOrderDaoImpl(StringORDER_FILE) {
-//        this.ROSTER_FILE =ORDER_FILE;
-//    }
+    public FlooringMasteryOrderDaoImpl(String ORDER_FOLDER) {
+        this.ORDER_FOLDER = ORDER_FOLDER;
+    }
+
     @Override
     public Order addOrder(Order orderDetail) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

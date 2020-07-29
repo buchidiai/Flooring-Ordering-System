@@ -7,6 +7,8 @@ package com.aspire.flooringmastery.service;
 
 import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.model.Order;
+import com.aspire.flooringmastery.model.OrderDetail;
+import com.aspire.flooringmastery.model.Product;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ import java.util.List;
  */
 public interface FlooringMasteryServiceLayer {
 
-    Order addOrder(Order orderDetail);
+    Order addOrder(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException;
 
     Order editOrder(Integer OrderNumber);
 
@@ -26,5 +28,7 @@ public interface FlooringMasteryServiceLayer {
     Order getOrder(String OrderNumber);
 
     List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException;
+
+    List<Product> getAllProducts() throws FlooringMasteryPersistenceException;
 
 }
