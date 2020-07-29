@@ -78,9 +78,10 @@ public class FlooringMasteryView {
 
     public OrderDetail getOrderDetails(String date, List<Product> allProducts) {
 
+        String orderDate = getOrderDate();
+
         //ask first name
         String customerName = io.readString("Please enter Customer name: e.g - Acme, Inc.  ");
-
         //ask state
         String state = io.readString("Please enter State: e.g - TX  ").toUpperCase();
         //ask for Product
@@ -102,6 +103,7 @@ public class FlooringMasteryView {
     }
 
     public void displayProducts(List<Product> products) {
+        displayAvailableProducts();
         //display header for fields
         io.print("___________________________________________________");
         System.out.printf("|%5s|%13s|%10s|%8s| \n", "Choice", "ProductType", "CostPerSqFt", "LaborCostPerSqFt");
@@ -116,6 +118,14 @@ public class FlooringMasteryView {
             displayProducts(i, p.getProductType(), p.getLaborCostPerSquareFoot(), p.getLaborCostPerSquareFoot());
         }
         displaySpace();
+
+    }
+
+    private void displayAvailableProducts() {
+
+        io.print("*******************************");
+        io.print("*******************************");
+        io.print("**** Available Products ****");
 
     }
 

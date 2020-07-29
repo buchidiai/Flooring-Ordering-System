@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface FlooringMasteryServiceLayer {
 
-    Order addOrder(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException;
+    Order addOrder(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException;
 
     Order editOrder(Integer OrderNumber);
 

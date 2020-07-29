@@ -21,8 +21,9 @@ import java.util.Scanner;
 public class FlooringMasteryProductDaoImpl implements FlooringMasteryProductDao {
 
     private final String PRODUCT_FILE;
+    private static final String PRODUCT_FOLDER = "Data/";
     private static final String DELIMITER = ",";
-    public static final int NUMBER_OF_FIELDS = 3;
+    private static final int NUMBER_OF_FIELDS = 3;
 
     private List<Product> products = new ArrayList<>();
 
@@ -61,10 +62,10 @@ public class FlooringMasteryProductDaoImpl implements FlooringMasteryProductDao 
             // Create Scanner for reading the file
             scanner = new Scanner(
                     new BufferedReader(
-                            new FileReader("Data/" + PRODUCT_FILE)));
+                            new FileReader(PRODUCT_FOLDER + PRODUCT_FILE)));
         } catch (FileNotFoundException e) {
             throw new FlooringMasteryPersistenceException(
-                    "-_- Could not load roster data into memory.", e);
+                    "-_- Could not load product data into memory.", e);
         }
         // currentLine holds the most recent line read from the file
         String currentLine;

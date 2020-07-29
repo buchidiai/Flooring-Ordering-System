@@ -13,26 +13,26 @@ import java.math.BigDecimal;
  */
 public class Tax {
 
-    private String StateAbbreviation;
-    private String StateName;
-    private BigDecimal TaxRate;
+    private String stateAbbreviation;
+    private String stateName;
+    private BigDecimal taxRate;
 
-    public Tax(String StateAbbreviation, String StateName, BigDecimal TaxRate) {
-        this.StateAbbreviation = StateAbbreviation;
-        this.StateName = StateName;
-        this.TaxRate = TaxRate;
+    public Tax(String stateAbbreviation, String stateName, BigDecimal taxRate) {
+        this.stateAbbreviation = stateAbbreviation;
+        this.stateName = stateName;
+        this.taxRate = taxRate;
     }
 
     public String getStateAbbreviation() {
-        return StateAbbreviation;
+        return stateAbbreviation;
     }
 
     public String getStateName() {
-        return StateName;
+        return stateName;
     }
 
     public BigDecimal getTaxRate() {
-        return TaxRate;
+        return taxRate;
     }
 
 }

@@ -14,8 +14,10 @@ import java.util.List;
  */
 public interface FlooringMasteryTaxDao {
 
-    List<Tax> getAllTaxes();
+    List<Tax> getAllTaxes() throws FlooringMasteryPersistenceException;
 
-    Tax getTax();
+    Tax getTax(String state) throws FlooringMasteryPersistenceException;
+
+    String getState() throws FlooringMasteryPersistenceException;
 
 }

@@ -224,8 +224,8 @@ public class UserIOConsoleImpl implements UserIO {
                     LocalDate orderDate = LocalDate.of(year, month, day);
 
                     //restricts dates that are the same as current day
-                    if (orderDate.isEqual(today)) {
-                        this.print("Orders can't be placed on same day basis, Please try " + Util.formatDate(today, 1) + " or a later date.");
+                    if (orderDate.isBefore(today) || orderDate.isEqual(today)) {
+                        this.print("Orders can't be on or before present day, Please try " + Util.formatDate(today, 1) + " or a later date.");
                         continue;
                     }
 

@@ -10,7 +10,9 @@ import com.aspire.flooringmastery.model.Order;
 import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.service.FlooringMasteryCustomerNameException;
+import com.aspire.flooringmastery.service.FlooringMasteryInvalidStateException;
 import com.aspire.flooringmastery.service.FlooringMasteryServiceLayer;
+import com.aspire.flooringmastery.service.FlooringmasteryInvalidAreaException;
 import com.aspire.flooringmastery.ui.FlooringMasteryView;
 import java.util.List;
 
@@ -65,7 +67,12 @@ public class FlooringMasteryController {
 
             }
 
-        } catch (FlooringMasteryCustomerNameException | FlooringMasteryPersistenceException e) {
+        } catch (FlooringMasteryCustomerNameException | FlooringmasteryInvalidAreaException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException e) {
+
+            System.out.println("e " + e.getLocalizedMessage());
+
+            System.out.println("e " + e.getClass());
+
             showErrorMsg(e.getMessage());
         }
         exitMessage();
@@ -97,7 +104,7 @@ public class FlooringMasteryController {
 
     }
 
-    private void addOrder() throws FlooringMasteryPersistenceException, FlooringMasteryCustomerNameException {
+    private void addOrder() throws FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException {
         view.displayAddOrderBanner();
 
         //get date of order

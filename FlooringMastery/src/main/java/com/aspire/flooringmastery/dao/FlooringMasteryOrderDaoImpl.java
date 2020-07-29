@@ -96,7 +96,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                     } catch (FileNotFoundException e) {
 
                         throw new FlooringMasteryPersistenceException(
-                                "-_- Could not load roster data into memory.", e);
+                                "-_- Could not load order data into memory.", e);
                     }
                 }
                 //break out loop to get file
