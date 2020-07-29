@@ -11,10 +11,10 @@ import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.dao.FlooringMasteryProductDao;
 import com.aspire.flooringmastery.dao.FlooringMasteryTaxDao;
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.model.Tax;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -39,37 +39,59 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     @Override
-    public Order addOrder(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
+    public Order addOrder(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
 
-        String customerName = orderDetail.getCustomerName();
-
-        System.out.println("customerName start " + customerName);
-
-        String state = orderDetail.getState();
-        System.out.println("state  start" + state);
-
-        Product product = orderDetail.getProduct();
-
-        System.out.println("product start " + product);
-
-        BigDecimal area = orderDetail.getArea();
-
-        System.out.println("area start" + area);
-
-        validateCustomerName(customerName);
-
-        validateState(state);
-
-        validateArea(area);
-
-        System.out.println("customerName end " + customerName);
-        System.out.println("state  end" + state);
-        System.out.println("product end " + product);
-        System.out.println("area end" + area);
-
-//        orderDao
+//        orderDao.addOrder(orderDetail);
         return null;
 
+    }
+
+    @Override
+    public Order calculcateCosts(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
+
+        //customer name entered
+        String customerName = orderDetail.getCustomerName();
+
+        //cstate entered
+        String state = orderDetail.getState();
+
+        //product selected
+        String product = orderDetail.getProductType();
+
+        //area entered
+        BigDecimal area = orderDetail.getArea();
+
+        //validate customer name
+        validateCustomerName(customerName);
+
+        //validate state
+        validateState(state);
+
+        //validate area
+        validateArea(area);
+
+        //get specific tax object
+        Tax taxForState = taxDao.getTax(state);
+
+        //gget specific product object
+        Product productForSale = productDao.getProduct(product);
+
+        //do calculations
+        BigDecimal materialCost = (area.multiply(productForSale.getCostPerSquareFoot())).setScale(2, RoundingMode.CEILING);
+        BigDecimal laborCost = (area.multiply(productForSale.getLaborCostPerSquareFoot())).setScale(2, RoundingMode.CEILING);
+        BigDecimal tax = (materialCost.add(laborCost)).multiply(taxForState.getTaxRate().divide(new BigDecimal("100.00"))).setScale(2, RoundingMode.CEILING);
+        BigDecimal total = (materialCost.add(laborCost.add(tax)));
+
+        //set values
+        orderDetail.setCostPerSquareFoot(productForSale.getCostPerSquareFoot());
+        orderDetail.setLaborCostPerSquareFoot(productForSale.getLaborCostPerSquareFoot());
+        orderDetail.setTaxRate(taxForState.getTaxRate());
+        orderDetail.setMaterialCost(materialCost);
+        orderDetail.setLaborCost(laborCost);
+        orderDetail.setTax(tax);
+        orderDetail.setTotal(total);
+
+        return orderDetail;
     }
 
     private void validateArea(BigDecimal area) throws FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException {
@@ -83,16 +105,11 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
 
     private void validateState(String state) throws FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException {
         System.out.println("2");
-        List<Tax> taxes = taxDao.getAllTaxes();
+        Tax tax = taxDao.getTax(state);
 
-        for (Tax t : taxes) {
-
-            if (!(t.getStateAbbreviation().contains(state))) {
-                throw new FlooringMasteryInvalidStateException("We are currently not taking orders for " + state);
-            }
-
+        if (tax == null) {
+            throw new FlooringMasteryInvalidStateException("We are currently not taking orders in " + state);
         }
-
     }
 
     private void validateCustomerName(String customerName) throws FlooringMasteryCustomerNameException {
@@ -148,6 +165,12 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     public List<Product> getAllProducts() throws FlooringMasteryPersistenceException {
 
         return productDao.getAllProducts();
+    }
+
+    @Override
+    public List<String> getAllStates() throws FlooringMasteryPersistenceException {
+
+        return taxDao.getAllStates();
     }
 
 }

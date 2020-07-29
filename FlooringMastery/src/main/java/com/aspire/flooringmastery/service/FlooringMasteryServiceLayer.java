@@ -7,7 +7,6 @@ package com.aspire.flooringmastery.service;
 
 import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import java.util.List;
 
@@ -17,7 +16,9 @@ import java.util.List;
  */
 public interface FlooringMasteryServiceLayer {
 
-    Order addOrder(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException;
+    Order addOrder(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException;
+
+    Order calculcateCosts(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException;
 
     Order editOrder(Integer OrderNumber);
 
@@ -30,5 +31,7 @@ public interface FlooringMasteryServiceLayer {
     List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException;
 
     List<Product> getAllProducts() throws FlooringMasteryPersistenceException;
+
+    List<String> getAllStates() throws FlooringMasteryPersistenceException;
 
 }

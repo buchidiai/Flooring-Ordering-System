@@ -31,6 +31,49 @@ public class UserIOConsoleImpl implements UserIO {
     }
 
     @Override
+    public boolean readYesOrNo(String prompt) {
+
+        String value = "";
+
+        boolean valid = true;
+        boolean yesOrNo = false;
+
+        while (valid) {
+            try {
+
+                this.print(prompt);
+
+                value = in.nextLine();
+
+                if (value.toLowerCase().charAt(0) == 'y' || value.toLowerCase().charAt(0) == 'n') {
+
+                    if (value.toLowerCase().charAt(0) == 'y') {
+                        yesOrNo = true;
+                        valid = false;
+                    } else if (value.toLowerCase().charAt(0) == 'n') {
+                        yesOrNo = false;
+                        valid = false;
+                    }
+
+                } else {
+                    this.print("You must enter (Yes/No)");
+                    continue;
+
+                }
+
+            } catch (Exception e) {
+
+                this.print("You must enter (Yes/No)");
+                continue;
+            }
+
+        }
+
+        return yesOrNo;
+
+    }
+
+    @Override
     public int readInt(String prompt) {
 
         int response = 0;

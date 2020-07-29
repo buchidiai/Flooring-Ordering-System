@@ -13,9 +13,9 @@ import java.math.BigDecimal;
  */
 public class Product {
 
-    private String productType;
-    private BigDecimal costPerSquareFoot;
-    private BigDecimal laborCostPerSquareFoot;
+    private final String productType;
+    private final BigDecimal costPerSquareFoot;
+    private final BigDecimal laborCostPerSquareFoot;
 
     public Product(String productType, BigDecimal costPerSquareFoot, BigDecimal laborCostPerSquareFoot) {
         this.productType = productType;

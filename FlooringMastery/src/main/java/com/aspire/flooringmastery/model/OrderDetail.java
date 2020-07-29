@@ -13,16 +13,43 @@ import java.math.BigDecimal;
  */
 public class OrderDetail {
 
-    private String customerName;
-    private String state;
-    private Product product;
-    private BigDecimal area;
+    private final String orderDate;
+    private final String customerName;
+    private final String state;
+    private final Product product;
+    private final BigDecimal area;
+    private BigDecimal materialCost;
+    private BigDecimal laborCost;
+    private BigDecimal tax;
+    private BigDecimal total;
+    private Tax taxInfo;
 
-    public OrderDetail(String customerName, String state, Product product, BigDecimal area) {
+    public OrderDetail(String orderDate, String customerName, String state, Product product, BigDecimal area) {
+        this.orderDate = orderDate;
         this.customerName = customerName;
         this.state = state;
         this.product = product;
         this.area = area;
+    }
+
+    public void setMaterialCost(BigDecimal materialCost) {
+        this.materialCost = materialCost;
+    }
+
+    public void setLaborCost(BigDecimal laborCost) {
+        this.laborCost = laborCost;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public void setTaxInfo(Tax taxInfo) {
+        this.taxInfo = taxInfo;
     }
 
     public String getCustomerName() {
@@ -41,4 +68,27 @@ public class OrderDetail {
         return area;
     }
 
+    public String getOrderDate() {
+        return orderDate;
+    }
+
+    public BigDecimal getMaterialCost() {
+        return materialCost;
+    }
+
+    public BigDecimal getLaborCost() {
+        return laborCost;
+    }
+
+    public BigDecimal getTax() {
+        return tax;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public Tax getTaxInfo() {
+        return taxInfo;
+    }
 }

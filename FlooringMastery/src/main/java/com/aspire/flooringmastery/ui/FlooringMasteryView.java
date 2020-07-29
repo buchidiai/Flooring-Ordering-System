@@ -6,7 +6,6 @@
 package com.aspire.flooringmastery.ui;
 
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.util.Util;
 import java.math.BigDecimal;
@@ -67,7 +66,7 @@ public class FlooringMasteryView {
 
         if (size == 0) {
 
-            io.readString("Press Enter to go to Main Menu.");
+            displayGoToMainMenu();
 
         } else {
 
@@ -76,20 +75,115 @@ public class FlooringMasteryView {
 
     }
 
-    public OrderDetail getOrderDetails(String date, List<Product> allProducts) {
+    private void displayReviewOrder() {
 
-        String orderDate = getOrderDate();
+        io.print("*******************************");
+        io.print("*******************************");
+        io.print("********* Review Order ********");
+        io.print("*******************************");
 
+    }
+
+    public boolean displayOrderDetails(Order orderDetail, String orderDate) {
+
+        displayReviewOrder();
+
+        io.print("_________________________________________________________________________________________________________________________________________________________");
+        System.out.printf("|%13s|%18s|%5s|%10s|%10s|%10s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
+        io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+        //display orders
+        displayOrders(orderDetail, orderDate);
+
+        displaySpace();
+
+        return askToPlaceOrder();
+
+    }
+
+    private void displayOrders(Order orderDetail, String orderDate) {
+//
+//        //Product object ~> has productType, costPerSquareFoot,laborCostPerSquareFoot
+//        Product product = orderDetail.getProduct();
+//
+//        //Tax object ~> has stateAbbreviation, stateName,taxRate
+//        Tax tax = orderDetail.getTaxInfo();
+
+        //to display
+        //date of order
+        String dateOfOrder = orderDate;
+
+        //customer name
+        String customerName = orderDetail.getCustomerName();
+        //state
+        String state = orderDetail.getState();
+        //state tax percentage
+        String taxRate = Util.addPercentage(orderDetail.getTaxRate());
+
+        //product type
+        String area = Util.BigDecimalToString(orderDetail.getArea());
+
+        //area of work to be done
+        String productType = orderDetail.getProductType();
+
+        //costPerSquareFoot
+        String costPerSquareFoot = Util.appendToMoney(orderDetail.getCostPerSquareFoot());
+        //laborCostPerSquareFoot
+        String laborCostPerSquareFoot = Util.appendToMoney(orderDetail.getLaborCostPerSquareFoot());
+        //materialCost
+        String materialCost = Util.appendToMoney(orderDetail.getMaterialCost());
+        //laborCost
+        String laborCost = Util.appendToMoney(orderDetail.getLaborCost());
+        //tax for work to be done
+        String taxForWork = Util.appendToMoney(orderDetail.getTax());
+        //total
+        String total = Util.appendToMoney(orderDetail.getTotal());
+
+        //display products formatted
+        System.out.printf("|%13s|%18s|%5s|%10s|%11s|%10s|%12s|%16s|%12s|%13s|%10s|%10s| \n", dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
+        displaySpace();
+        io.print("Your " + dateOfOrder + " order for " + productType + " with an area of " + area + " Sqft in " + state + " will come to a total of " + total);
+
+    }
+
+    private boolean askToPlaceOrder() {
+
+        boolean placorder = io.readYesOrNo("Would you like to confirm this order? ");
+
+        return placorder;
+    }
+
+    public Order getOrderDetails(List<Product> allProducts, List<String> allStates) {
+
+        boolean validState = true;
+        String state = "";
+
+        //not valid
         //ask first name
         String customerName = io.readString("Please enter Customer name: e.g - Acme, Inc.  ");
-        //ask state
-        String state = io.readString("Please enter State: e.g - TX  ").toUpperCase();
+
+        //validate state
+        while (validState) {
+
+            //ask state
+            state = io.readString("Please enter State: e.g - TX  ").toUpperCase();
+
+            if (!(allStates.contains(state))) {
+                io.print("We are currently not taking orders in " + state);
+                continue;
+            }
+
+            validState = false;
+
+        }
+
         //ask for Product
         Product productType = getProductType(allProducts);
         // ask area
         BigDecimal area = io.readBigDecimal("Please enter an Area:  e.g 200");
 
-        return new OrderDetail(customerName, state, productType, area);
+        return new Order(customerName, productType.getProductType(), area, state);
+
     }
 
     public Product getProductType(List<Product> allProducts) {
@@ -98,7 +192,7 @@ public class FlooringMasteryView {
 
         int productIndex = io.readInt("Please select a product", 1, allProducts.size());
 
-        return allProducts.get(productIndex);
+        return allProducts.get(productIndex - 1);
 
     }
 
@@ -121,18 +215,23 @@ public class FlooringMasteryView {
 
     }
 
+    public void displayGoToMainMenu() {
+        io.readString("Press Enter to go to Main Menu.");
+    }
+
     private void displayAvailableProducts() {
 
         io.print("*******************************");
         io.print("*******************************");
-        io.print("**** Available Products ****");
+        io.print("****** Available Products *****");
+        io.print("*******************************");
 
     }
 
     public void displayOutOfProducts() {
         io.print("Sorry we are out of products at the moment try again");
         displaySpace();
-        io.readString("Press Enter to go to Main Menu.");
+        displayGoToMainMenu();
 
     }
 
@@ -170,7 +269,7 @@ public class FlooringMasteryView {
         System.out.printf("|%5s|%18s|%5s|%10s|%10s|%10s|%12s|%12s|%10s|%13s|%10s|%10s \n", "OrderNumber", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
         io.print("-------------------------------------------------------------------------------------------------------------------------------------------------------");
 
-        //initiize product
+        //initiize order
         Order o;
 
         if (orders.isEmpty()) {
@@ -178,14 +277,15 @@ public class FlooringMasteryView {
 
         } else {
             for (int i = 0; i < orders.size(); i++) {
-                //set product in array
+                //set order in array
                 o = orders.get(i);
-                //display projecy
+                //display orders
                 displayOrders(o);
             }
         }
 
         displaySpace();
+        displayGoToMainMenu();
     }
 
     private void displayOrders(Order order) {
@@ -193,14 +293,14 @@ public class FlooringMasteryView {
         Integer orderNumber = order.getOrderNumber();
         String customerName = order.getCustomerName();
         String state = order.getState();
-        String taxRate = Util.appendToMoney(order.getTaxRate());
+        String taxRate = Util.addPercentage(order.getTaxRate());
         String productType = order.getProductType();
         String area = Util.BigDecimalToString(order.getArea());
-        String costPerSquareFoot = Util.BigDecimalToString(order.getCostPerSquareFoot());
-        String laborCostPerSquareFoot = Util.BigDecimalToString(order.getLaborCostPerSquareFoot());
+        String costPerSquareFoot = Util.appendToMoney(order.getCostPerSquareFoot());
+        String laborCostPerSquareFoot = Util.appendToMoney(order.getLaborCostPerSquareFoot());
         String materialCost = Util.appendToMoney(order.getMaterialCost());
         String laborCost = Util.appendToMoney(order.getLaborCost());
-        String tax = Util.BigDecimalToString(order.getTax());
+        String tax = Util.appendToMoney(order.getTax());
         String total = Util.appendToMoney(order.getTotal());
 
         //display products formatted
@@ -215,13 +315,16 @@ public class FlooringMasteryView {
         io.print("      *******************************      ");
         io.print("** " + errorMsg + " **");
         io.print("      *******************************      ");
-        io.readString("Press Enter to continue");
+//        io.readString("Press Enter to continue");
+
+        displayGoToMainMenu();
     }
 
     public void displayAllOrdersBanner() {
         io.print("*******************************************");
         io.print("*******************************************");
         io.print("*********** Display All Orders ************");
+        io.print("*******************************************");
         displaySpace();
 
     }
@@ -229,7 +332,8 @@ public class FlooringMasteryView {
     public void displayAddOrderBanner() {
         io.print("*******************************************");
         io.print("*******************************************");
-        io.print("*********** Add An order ************");
+        io.print("************** Add An order ***************");
+        io.print("*******************************************");
         displaySpace();
 
     }

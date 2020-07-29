@@ -16,6 +16,12 @@ import java.util.regex.Pattern;
  */
 public class Util {
 
+    public static String addPercentage(BigDecimal big) {
+
+        return big + "%";
+
+    }
+
     public static String formatDate(LocalDate date, int daysToAdd) {
 
         return date.plusDays(daysToAdd).format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));

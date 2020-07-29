@@ -16,8 +16,8 @@ public interface FlooringMasteryTaxDao {
 
     List<Tax> getAllTaxes() throws FlooringMasteryPersistenceException;
 
-    Tax getTax(String state) throws FlooringMasteryPersistenceException;
+    List<String> getAllStates() throws FlooringMasteryPersistenceException;
 
-    String getState() throws FlooringMasteryPersistenceException;
+    Tax getTax(String state) throws FlooringMasteryPersistenceException;
 
 }

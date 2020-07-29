@@ -21,6 +21,7 @@ import java.util.Scanner;
 public class FlooringMasteryTaxDaoImpl implements FlooringMasteryTaxDao {
 
     private final String TAX_FILE;
+    private final String TAX_FOLDER = "Data/";
     private static final String DELIMITER = ",";
     public static final int NUMBER_OF_FIELDS = 3;
 
@@ -56,10 +57,15 @@ public class FlooringMasteryTaxDaoImpl implements FlooringMasteryTaxDao {
     }
 
     @Override
-    public List<String> getState() throws FlooringMasteryPersistenceException {
-        //get all states in a list
-        taxes
+    public List<String> getAllStates() throws FlooringMasteryPersistenceException {
+        loadTaxes();
+        List<String> states = new ArrayList<>();
 
+        for (Tax t : taxes) {
+            states.add(t.getStateAbbreviation());
+        }
+
+        return states;
     }
 
     private void loadTaxes() throws FlooringMasteryPersistenceException {
@@ -69,7 +75,7 @@ public class FlooringMasteryTaxDaoImpl implements FlooringMasteryTaxDao {
             // Create Scanner for reading the file
             scanner = new Scanner(
                     new BufferedReader(
-                            new FileReader("Data/" + TAX_FILE)));
+                            new FileReader(TAX_FOLDER + TAX_FILE)));
         } catch (FileNotFoundException e) {
             throw new FlooringMasteryPersistenceException(
                     "-_- Could not tax data into memory.", e);

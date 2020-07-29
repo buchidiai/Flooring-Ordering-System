@@ -7,7 +7,6 @@ package com.aspire.flooringmastery.controller;
 
 import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.service.FlooringMasteryCustomerNameException;
 import com.aspire.flooringmastery.service.FlooringMasteryInvalidStateException;
@@ -34,9 +33,9 @@ public class FlooringMasteryController {
         boolean keepGoing = true;
         int menuSelection = 0;
 
-        try {
-            while (keepGoing) {
+        while (keepGoing) {
 
+            try {
                 menuSelection = getMenuSelection();
 
                 switch (menuSelection) {
@@ -65,16 +64,17 @@ public class FlooringMasteryController {
                         unknownCommand();
                 }
 
+            } catch (FlooringMasteryCustomerNameException | FlooringmasteryInvalidAreaException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException e) {
+
+                System.out.println("e " + e.getLocalizedMessage());
+
+                System.out.println("e " + e.getClass());
+
+                showErrorMsg(e.getMessage());
             }
 
-        } catch (FlooringMasteryCustomerNameException | FlooringmasteryInvalidAreaException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException e) {
-
-            System.out.println("e " + e.getLocalizedMessage());
-
-            System.out.println("e " + e.getClass());
-
-            showErrorMsg(e.getMessage());
         }
+
         exitMessage();
     }
 
@@ -107,11 +107,9 @@ public class FlooringMasteryController {
     private void addOrder() throws FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException {
         view.displayAddOrderBanner();
 
-        //get date of order
-        // String date = view.getOrderDate();
-        String date = "07/23/1991";
-
         List<Product> allProducts = service.getAllProducts();
+
+        List<String> allStates = service.getAllStates();
 
         if (allProducts.size() == 0) {
 
@@ -119,9 +117,23 @@ public class FlooringMasteryController {
 
         } else {
 
-            OrderDetail orderDetails = view.getOrderDetails(date, allProducts);
+            String orderDate = view.getOrderDate();
 
-            service.addOrder(orderDetails);
+            Order orderDetails = view.getOrderDetails(allProducts, allStates);
+
+            Order orderDetailsSummary = service.calculcateCosts(orderDetails);
+
+            boolean orderToPlace = view.displayOrderDetails(orderDetailsSummary, orderDate);
+
+            if (orderToPlace) {
+
+                service.addOrder(orderDetails);
+
+            } else {
+
+                view.displayGoToMainMenu();
+
+            }
 
         }
 

@@ -17,6 +17,8 @@ public interface UserIO {
 
     String readString(String prompt);
 
+    boolean readYesOrNo(String prompt);
+
     int readInt(String prompt);
 
     int readInt(String prompt, int min, int max);

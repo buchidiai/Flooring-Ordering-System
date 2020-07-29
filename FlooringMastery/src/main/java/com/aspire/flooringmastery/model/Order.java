@@ -13,18 +13,28 @@ import java.math.BigDecimal;
  */
 public class Order {
 
+    //orderDate, customerName, state, productType, area
     private Integer orderNumber;
+
     private String customerName;
-    private String state;
-    private BigDecimal taxRate;
     private String productType;
     private BigDecimal area;
+    private String state;
+    private BigDecimal taxRate;
+
     private BigDecimal costPerSquareFoot;
     private BigDecimal laborCostPerSquareFoot;
     private BigDecimal materialCost;
     private BigDecimal laborCost;
     private BigDecimal tax;
     private BigDecimal total;
+
+    public Order(String customerName, String productType, BigDecimal area, String state) {
+        this.customerName = customerName;
+        this.productType = productType;
+        this.area = area;
+        this.state = state;
+    }
 
     public Order(Integer orderNumber, String customerName, String state, BigDecimal taxRate, String productType, BigDecimal area,
             BigDecimal costPerSquareFoot, BigDecimal laborCostPerSquareFoot, BigDecimal materialCost, BigDecimal laborCost, BigDecimal tax,
@@ -40,6 +50,34 @@ public class Order {
         this.materialCost = materialCost;
         this.laborCost = laborCost;
         this.tax = tax;
+        this.total = total;
+    }
+
+    public void setTaxRate(BigDecimal taxRate) {
+        this.taxRate = taxRate;
+    }
+
+    public void setCostPerSquareFoot(BigDecimal costPerSquareFoot) {
+        this.costPerSquareFoot = costPerSquareFoot;
+    }
+
+    public void setLaborCostPerSquareFoot(BigDecimal laborCostPerSquareFoot) {
+        this.laborCostPerSquareFoot = laborCostPerSquareFoot;
+    }
+
+    public void setMaterialCost(BigDecimal materialCost) {
+        this.materialCost = materialCost;
+    }
+
+    public void setLaborCost(BigDecimal laborCost) {
+        this.laborCost = laborCost;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
+    }
+
+    public void setTotal(BigDecimal total) {
         this.total = total;
     }
 
