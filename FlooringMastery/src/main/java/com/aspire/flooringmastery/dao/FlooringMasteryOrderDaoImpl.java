@@ -6,7 +6,6 @@
 package com.aspire.flooringmastery.dao;
 
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.util.Util;
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +17,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -46,26 +44,41 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     }
 
     @Override
-    public Order addOrder(OrderDetail OrderDetail) throws FlooringMasteryPersistenceException {
+    public Order addOrder(Order OrderDetail) throws FlooringMasteryPersistenceException {
 
         // loadOrders(Util.getTodaysDate());
-        System.out.println("1");
-
         Order orderAdded = new Order((MAX_ORDER_NUMBER), OrderDetail);
-
         orders.add(orderAdded);
-
-        //   writeOrder();
+        writeOrder();
         return orderAdded;
     }
 
     @Override
-    public Order editOrder(Integer OrderNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
+
+        Order originalOrder = getOrder(orderDate, orderNumber);
+
+        if (originalOrder != null) {
+            originalOrder.setCustomerName(order.getCustomerName());
+            originalOrder.setProductType(order.getProductType());
+            originalOrder.setArea(order.getArea());
+            originalOrder.setState(order.getState());
+            originalOrder.setTaxRate(order.getTaxRate());
+            originalOrder.setCostPerSquareFoot(order.getCostPerSquareFoot());
+            originalOrder.setLaborCostPerSquareFoot(order.getLaborCostPerSquareFoot());
+            originalOrder.setMaterialCost(order.getMaterialCost());
+            originalOrder.setLaborCost(order.getLaborCost());
+            originalOrder.setTax(order.getTax());
+            originalOrder.setTotal(order.getTotal());
+        }
+
+        writeOrder();
+
+        return originalOrder;
     }
 
     @Override
-    public boolean removeOrder(Integer OrderNumber) {
+    public boolean removeOrder(Order order) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -75,8 +88,18 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     }
 
     @Override
-    public Order getOrder(String OrderNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException {
+//        loadOrders(orderDate);
+
+        Order orderFound = null;
+
+        for (Order o : orders) {
+            if (o.getOrderNumber() == orderNumber) {
+                orderFound = o;
+                break;
+            }
+        }
+        return orderFound;
     }
 
     @Override
@@ -144,11 +167,12 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
             // turn a Order into a String
             orderAsText = marshallOrder(currentOrder);
 
-            if (orderAsText != null) {
-                out.println(orderAsText);
-                out.flush();
-            }
+            out.println(orderAsText);
+            out.flush();
 
+//            if (orderAsText != null) {
+//
+//            }
         }
 
         // Clean up
@@ -160,7 +184,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         // We need to turn a Order object into a line of text for our file.
         // For example, we need an in memory object to end up like this:
         // chips::2.50::10
-        System.out.println("bout to marshall");
+        System.out.println("marshallOrder ~> write to file " + aOrder.getCustomerName() + " , " + aOrder.getOrderNumber());
         // It's not a complicated process. Just get out each property,
         // and concatenate with our DELIMITER as a kind of spacer.
         // Start with the order id, since that's supposed to be first.
@@ -171,14 +195,16 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 //
 //        }
 
-        //order number
-        String orderAsText = aOrder.getOrderNumber() + DELIMITER;
-
-        if (aOrder.getOrderNumber() >= MAX_ORDER_NUMBER) {
+        if (aOrder.getOrderNumber() > MAX_ORDER_NUMBER) {
 
             MAX_ORDER_NUMBER = aOrder.getOrderNumber() + 1;
 
+            System.out.println(" new max num " + MAX_ORDER_NUMBER);
+
         }
+
+        //order number
+        String orderAsText = aOrder.getOrderNumber() + DELIMITER;
 
         // add the rest of the properties in the correct order:
         // price
@@ -223,6 +249,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         //order date + .txt extension
 
         String orderDateFileExt = Util.cleanDate(orderDate) + ".txt";
+
         //file object
         File dir = new File(ORDER_FOLDER);
         File file = new File(ORDER_FOLDER + ORDER_FILE_NAME + orderDateFileExt);
@@ -298,14 +325,6 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     }
 
-    private Integer unmarshallOrderNumner(String orderAsText) {
-
-        String orderTokens = orderAsText.split(DELIMITER)[0];
-
-        return Integer.parseInt(orderTokens);
-
-    }
-
     private Order unmarshallOrder(String orderAsText) {
 
         // orderAsText is expecting a line read in from our file.
@@ -365,13 +384,8 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         try {
             //create order object
             Integer orderNumber = Integer.parseInt(orderTokens[0]);
-            if (Objects.equals(orderNumber, MAX_ORDER_NUMBER)) {
 
-                System.out.println("Order number Colition");
-                return null;
-            }
-
-            if (orderNumber > MAX_ORDER_NUMBER) {
+            if (orderNumber >= MAX_ORDER_NUMBER) {
                 MAX_ORDER_NUMBER = orderNumber + 1;
             }
             String customerName = orderTokens[1];

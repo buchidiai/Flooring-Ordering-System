@@ -11,7 +11,6 @@ import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.dao.FlooringMasteryProductDao;
 import com.aspire.flooringmastery.dao.FlooringMasteryTaxDao;
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.model.Tax;
 import java.math.BigDecimal;
@@ -40,14 +39,14 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     @Override
-    public Order addOrder(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
+    public Order addOrder(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
 
         return orderDao.addOrder(orderDetail);
 
     }
 
     @Override
-    public OrderDetail calculateCosts(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
+    public Order calculateCosts(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
 
         //customer name entered
         String customerName = orderDetail.getCustomerName();
@@ -93,50 +92,20 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
         return orderDetail;
     }
 
-    private void validateArea(BigDecimal area) throws FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException {
-        System.out.println("3");
-        if (area.compareTo(new BigDecimal("100.00")) < 0) {
-
-            throw new FlooringmasteryInvalidAreaException("Area must be a minimum of 100");
-        }
-
-    }
-
-    private void validateState(String state) throws FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException {
-        System.out.println("2");
-        Tax tax = taxDao.getTax(state);
-
-        if (tax == null) {
-            throw new FlooringMasteryInvalidStateException("We are currently not taking orders in " + state);
-        }
-    }
-
-    private void validateCustomerName(String customerName) throws FlooringMasteryCustomerNameException {
-
-        System.out.println("1");
-//        Pattern p = Pattern.compile("/^[a-zA-Z0-9,.!? ]*$/", Pattern.CASE_INSENSITIVE);
-//
-//        Matcher m = p.matcher(customerName);
-//
-//        boolean b = m.find();
-
-        if (customerName.isEmpty()) {
-
-            throw new FlooringMasteryCustomerNameException("Customer name can't be empty");
-
-        }
-//
-//        if (b) {
-//
-//            throw new FlooringMasteryCustomerNameException("Customer name contains can only contain [0-9][a-z][.][,]");
-//
-//        }
-
-    }
-
     @Override
-    public Order editOrder(Integer OrderNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
+
+        //validate customer name
+        validateCustomerName(order.getCustomerName());
+
+        //validate state
+        validateState(order.getState());
+
+        //validate area
+        validateArea(order.getArea());
+
+        return orderDao.editOrder(order, orderNumber, orderDate);
+
     }
 
     @Override
@@ -150,8 +119,8 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     @Override
-    public Order getOrder(String OrderNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException {
+        return orderDao.getOrder(orderDate, orderNumber);
     }
 
     @Override
@@ -170,6 +139,45 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     public List<String> getAllStates() throws FlooringMasteryPersistenceException {
 
         return taxDao.getAllStates();
+    }
+
+    private void validateArea(BigDecimal area) throws FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException {
+
+        if (area.compareTo(new BigDecimal("100.00")) < 0) {
+
+            throw new FlooringmasteryInvalidAreaException("Area must be a minimum of 100.");
+        }
+
+    }
+
+    private void validateState(String state) throws FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException {
+
+        Tax tax = taxDao.getTax(state);
+
+        if (tax == null) {
+            throw new FlooringMasteryInvalidStateException("We are currently not taking orders in " + state + ".");
+        }
+    }
+
+    private void validateCustomerName(String customerName) throws FlooringMasteryCustomerNameException {
+
+//        Pattern p = Pattern.compile("/^[a-zA-Z0-9,.!? ]*$/", Pattern.CASE_INSENSITIVE);
+//
+//        Matcher m = p.matcher(customerName);
+//
+//        boolean b = m.find();
+        if (customerName.isEmpty()) {
+
+            throw new FlooringMasteryCustomerNameException("Customer name can't be empty.");
+
+        }
+//
+//        if (b) {
+//
+//            throw new FlooringMasteryCustomerNameException("Customer name contains can only contain [0-9][a-z][.][,]");
+//
+//        }
+
     }
 
 }

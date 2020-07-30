@@ -6,7 +6,6 @@
 package com.aspire.flooringmastery.dao;
 
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import java.util.List;
 
 /**
@@ -15,15 +14,15 @@ import java.util.List;
  */
 public interface FlooringMasteryOrderDao {
 
-    Order addOrder(OrderDetail orderDetail) throws FlooringMasteryPersistenceException;
+    Order addOrder(Order order) throws FlooringMasteryPersistenceException;
 
-    Order editOrder(Integer OrderNumber);
+    Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException;
 
-    boolean removeOrder(Integer OrderNumber);
+    boolean removeOrder(Order order) throws FlooringMasteryPersistenceException;
 
     void exportOrder();
 
-    Order getOrder(String OrderNumber);
+    Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException;
 
     List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException;
 

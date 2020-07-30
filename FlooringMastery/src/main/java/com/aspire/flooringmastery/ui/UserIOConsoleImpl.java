@@ -146,36 +146,29 @@ public class UserIOConsoleImpl implements UserIO {
             try {
 
                 this.print(prompt);
-
-                this.print("Press q to quit");
                 value = in.nextLine();
 
-                if (value.toLowerCase().charAt(0) == 'q') {
-                    return null;
+                if (value.length() == 1) {
+                    this.print("Input not valid");
+                    continue;
                 } else {
-                    if (value.length() == 1) {
-                        this.print("Must be a valid currency amount");
+                    result = new BigDecimal(value);
+
+                    //check if negative
+                    if (result.signum() == -1) {
+                        this.print("Must be a positive number");
                         continue;
                     } else {
-                        result = new BigDecimal(value);
-
-                        //check if negative
-                        if (result.signum() == -1) {
-                            this.print("Must be a positive number");
-                            continue;
-                        } else {
-                            //not negative
-                            result = new BigDecimal(value).setScale(2, RoundingMode.CEILING);
-                            valid = false;
-                        }
-
+                        //not negative
+                        result = new BigDecimal(value).setScale(2, RoundingMode.CEILING);
+                        valid = false;
                     }
 
                 }
 
             } catch (Exception e) {
 
-                this.print("Must be a valid currency amount, try again!");
+                this.print("Input not valid 2");
                 continue;
             }
 

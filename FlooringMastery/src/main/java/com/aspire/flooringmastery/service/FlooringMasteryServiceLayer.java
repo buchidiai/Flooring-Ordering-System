@@ -7,7 +7,6 @@ package com.aspire.flooringmastery.service;
 
 import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import java.util.List;
 
@@ -17,17 +16,17 @@ import java.util.List;
  */
 public interface FlooringMasteryServiceLayer {
 
-    Order addOrder(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException;
+    Order addOrder(Order order) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException;
 
-    OrderDetail calculateCosts(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException;
+    Order calculateCosts(Order order) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException;
 
-    Order editOrder(Integer OrderNumber);
+    Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException;
 
     boolean removeOrder(Integer OrderNumber);
 
     void exportOrder();
 
-    Order getOrder(String OrderNumber);
+    Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException;
 
     List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException;
 

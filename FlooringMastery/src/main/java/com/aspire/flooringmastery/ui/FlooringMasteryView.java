@@ -6,9 +6,9 @@
 package com.aspire.flooringmastery.ui;
 
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.util.Util;
+import static java.lang.Integer.parseInt;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -42,13 +42,81 @@ public class FlooringMasteryView {
 
     }
 
-    public String getOrderDateToDisplayAllOrders() {
+    public boolean displayFoundOrder(Order order, String orderDate) {
+
+        displayFoundOrder();
+
+        io.print("_________________________________________________________________________________________________________________________________________________________");
+        System.out.printf("|%13s|%18s|%5s|%10s|%10s|%10s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
+        io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+        //display order
+        displayOneOrder(order, orderDate);
+
+        displaySpace();
+
+        return askToEditOrder();
+
+    }
+
+    private void displayOneOrder(Order order, String orderDate) {
+
+        //date of order
+        String dateOfOrder = orderDate;
+
+        //customer name
+        String customerName = order.getCustomerName();
+        //state
+        String state = order.getState();
+        //state tax percentage
+        String taxRate = Util.addPercentage(order.getTaxRate());
+
+        //product type
+        String area = Util.BigDecimalToString(order.getArea());
+
+        //area of work to be done
+        String productType = order.getProductType();
+
+        //costPerSquareFoot
+        String costPerSquareFoot = Util.appendToMoney(order.getCostPerSquareFoot());
+        //laborCostPerSquareFoot
+        String laborCostPerSquareFoot = Util.appendToMoney(order.getLaborCostPerSquareFoot());
+        //materialCost
+        String materialCost = Util.appendToMoney(order.getMaterialCost());
+        //laborCost
+        String laborCost = Util.appendToMoney(order.getLaborCost());
+        //tax for work to be done
+        String taxForWork = Util.appendToMoney(order.getTax());
+        //total
+        String total = Util.appendToMoney(order.getTotal());
+
+        //display products formatted
+        System.out.printf("|%13s|%18s|%5s|%10s|%11s|%10s|%12s|%16s|%12s|%13s|%10s|%10s| \n", dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
+        displaySpace();
+        io.print("Your order for " + productType + " with an area of " + area + " Sqft in " + state + " totaling in " + total + " was found.");
+
+    }
+
+    private boolean askToEditOrder() {
+
+        boolean placorder = io.readYesOrNo("Would you like to Edit this order? (Yes/No) ");
+
+        return placorder;
+    }
+
+    public String getOrderDateNoRestriction() {
 
         String orderDate = io.readDate("Please enter an Order Date: e.g 05/13/2020 - MM/DD/YYYY");
         return orderDate;
     }
 
-    public String getOrderDate() {
+    public String getOrderDateRestricted() {
+
+        String orderDate = io.readDateForOrders("Please enter an Order Date: e.g 05/13/2020 - MM/DD/YYYY");
+        return orderDate;
+    }
+
+    public String getOrderDateToEdit() {
 
         String orderDate = io.readDateForOrders("Please enter an Order Date: e.g 05/13/2020 - MM/DD/YYYY");
         return orderDate;
@@ -61,7 +129,7 @@ public class FlooringMasteryView {
 
         displayDots();
 
-        io.print(size + " results were found");
+        io.print(size + " results were found.");
 
         displaySpace();
 
@@ -76,21 +144,157 @@ public class FlooringMasteryView {
 
     }
 
-    private void displayReviewOrder() {
+    public Order displayOrderToEdit(Order order, List<String> allStates, List<Product> allProducts) {
 
-        io.print("*******************************");
-        io.print("*******************************");
-        io.print("********* Review Order ********");
-        io.print("*******************************");
+        //
+        //ask user for new info
+        //
+        String customerName = io.readString("Please enter new Customer name: (" + order.getCustomerName() + ") ");
+
+        //validate new state
+        String state = getValidateState(order.getState(), allStates);
+        //ask for Product and validate
+        //will return null if user hits enter key else will return product type
+        Product productType = getValidateProductType(allProducts, order.getProductType());
+        //validate area
+        BigDecimal area = getValidateArea(order.getArea());
+
+        // ask area
+        if (customerName.isEmpty() && state.isEmpty() && (productType == null) && (area == null)) {
+            return order;
+
+        } else {
+
+            String newCustomerName = customerName.isEmpty() ? order.getCustomerName() : customerName;
+
+            String newProductType = productType == null ? order.getProductType() : productType.getProductType();
+
+            String newState = state.isEmpty() ? order.getState() : state;
+
+            BigDecimal newArea = (area == null) ? order.getArea() : area;
+
+            return new Order(newCustomerName, newProductType, newArea, newState);
+
+        }
 
     }
 
-    public boolean displayOrderDetails(OrderDetail orderDetail, String orderDate) {
+    private BigDecimal getValidateArea(BigDecimal orderArea) {
+        boolean validArea = true;
+        BigDecimal area = new BigDecimal("0");
+        String areaString = "";
+
+        while (validArea) {
+            try {
+                areaString = io.readString("Please enter an Area: (" + orderArea + ")  e.g 200");
+                if (!areaString.isEmpty()) {
+                    area = new BigDecimal(areaString);
+                    if (area.compareTo(new BigDecimal("100.00")) < 0) {
+                        io.print("Area must be a minimum of 100.");
+                        continue;
+                    }
+                } else {
+                    return null;
+                }
+
+                validArea = false;
+
+            } catch (Exception e) {
+                io.print("Area must be a valid number.");
+                continue;
+            }
+
+        }
+
+        return area;
+    }
+
+    private String getValidateState(String orderState, List<String> allStates) {
+        boolean validState = true;
+        String state = "";
+
+        while (validState) {
+            //ask state
+            state = io.readString("Please enter a new State: (" + orderState + ")  ").toUpperCase();
+            //check if state is not empty
+            //so validate input
+            if (!state.isEmpty()) {
+                if (!(allStates.contains(state))) {
+                    io.print("We are currently not taking orders in " + state + ".");
+                    continue;
+                }
+            }
+            validState = false;
+        }
+
+        return state;
+    }
+
+    public Product getValidateProductType(List<Product> allProducts, String previousProduct) {
+
+        displayProducts(allProducts);
+
+        boolean isValid = true;
+
+        int productIndex = 0;
+
+        while (isValid) {
+
+            try {
+                String userAnswer = io.readString("Please select a product: (" + previousProduct + ")  (" + 1 + "-" + allProducts.size() + ")  ");
+
+                if (userAnswer.isEmpty()) {
+                    return null;
+                } else if (parseInt(userAnswer) >= 1 && parseInt(userAnswer) <= allProducts.size()) {
+
+                    productIndex = parseInt(userAnswer);
+
+                }
+
+                if (productIndex == 0) {
+                    io.print("Choice must be from (" + 1 + "-" + allProducts.size() + ")");
+
+                    continue;
+                }
+                isValid = false;
+
+            } catch (Exception e) {
+
+                io.print("Choice must be from (" + 1 + "-" + allProducts.size() + ")");
+
+                continue;
+
+            }
+
+        }
+
+        return allProducts.get(productIndex - 1);
+
+    }
+
+    public boolean displayOrderDetails(Order orderDetail, String orderDate, boolean newOrder) {
+
+        displayReviewOrder();
+
+        io.print("_______________________________________________________________________________________________________________________________________________________________");
+        System.out.printf("|%13s|%18s|%5s|%10s|%10s|%16s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
+        io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+        //display orders
+        displayOrders(orderDetail, orderDate);
+
+        displaySpace();
+
+        return newOrder ? askToPlaceOrder() : askToUpdateOrder();
+
+    }
+
+    public void displayEditOrderDetails(Order orderDetail, String orderDate) {
 
         displayReviewOrder();
 
         io.print("_________________________________________________________________________________________________________________________________________________________");
-        System.out.printf("|%13s|%18s|%5s|%10s|%10s|%10s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
+        System.out.printf("|%13s|%18s|%5s|%10s|%10s|%16s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
         io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         //display orders
@@ -98,27 +302,27 @@ public class FlooringMasteryView {
 
         displaySpace();
 
-        return askToPlaceOrder();
+        displayGoToMainMenuAfterNoChanges();
 
     }
 
-    private void displayOrders(OrderDetail orderDetail, String orderDate) {
+    private void displayOrders(Order orderDetail, String orderDate) {
 
         //date of order
         String dateOfOrder = orderDate;
 
         //customer name
-        String customerName = orderDetail.getCustomerName();
+        String customerName = Util.capitalizeFirstWord(orderDetail.getCustomerName());
         //state
         String state = orderDetail.getState();
         //state tax percentage
         String taxRate = Util.addPercentage(orderDetail.getTaxRate());
 
         //product type
-        String area = Util.BigDecimalToString(orderDetail.getArea());
+        String area = Util.BigDecimalToString(orderDetail.getArea()) + " Sqft";
 
         //area of work to be done
-        String productType = orderDetail.getProductType();
+        String productType = Util.capitalizeFirstWord(orderDetail.getProductType());
 
         //costPerSquareFoot
         String costPerSquareFoot = Util.appendToMoney(orderDetail.getCostPerSquareFoot());
@@ -134,7 +338,8 @@ public class FlooringMasteryView {
         String total = Util.appendToMoney(orderDetail.getTotal());
 
         //display products formatted
-        System.out.printf("|%13s|%18s|%5s|%10s|%11s|%10s|%12s|%16s|%12s|%13s|%10s|%10s| \n", dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
+        System.out.printf("|%13s|%18s|%5s|%10s|%11s|%16s|%12s|%16s|%12s|%13s|%10s|%10s| \n", dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
+        io.print("_______________________________________________________________________________________________________________________________________________________________");
         displaySpace();
         io.print("Your " + dateOfOrder + " order for " + productType + " with an area of " + area + " Sqft in " + state + " will come to a total of " + total);
 
@@ -142,34 +347,41 @@ public class FlooringMasteryView {
 
     private boolean askToPlaceOrder() {
 
-        boolean placorder = io.readYesOrNo("Would you like to confirm this order? ");
+        boolean placOrder = io.readYesOrNo("Would you like to confirm this order? (Yes/No) ");
 
-        return placorder;
+        return placOrder;
     }
 
-    public OrderDetail getOrderDetails(List<Product> allProducts, List<String> allStates) {
+    private boolean askToUpdateOrder() {
+
+        boolean updateOrder = io.readYesOrNo("Would you like to update this order? (Yes/No) ");
+
+        return updateOrder;
+    }
+
+    public void displayGoToMainMenuAfterNoChanges() {
+        io.print("There were no changes in your order.");
+        io.readString("Please press Enter to go to main Menu.");
+    }
+
+    public Order getOrderDetails(List<Product> allProducts, List<String> allStates) {
 
         boolean validState = true;
         String state = "";
 
-        //not valid
         //ask first name
-//        String customerName = io.readString("Please enter Customer name: e.g - Acme, Inc.  ");
-        String customerName = "test name";
+        String customerName = io.readString("Please enter Customer name: e.g - Acme, Inc.");
 
         //validate state
         while (validState) {
 
             //ask state
-            state = io.readString("Please enter State: e.g - TX  ").toUpperCase();
-
+            state = io.readString("Please enter State: e.g - TX , NY, CA  ").toUpperCase();
             if (!(allStates.contains(state))) {
-                io.print("We are currently not taking orders in " + state);
+                io.print("We are currently not taking orders in " + state + ".");
                 continue;
             }
-
             validState = false;
-
         }
 
         //ask for Product
@@ -177,15 +389,15 @@ public class FlooringMasteryView {
         // ask area
         //   BigDecimal area = io.readBigDecimal("Please enter an Area:  e.g 200");
         BigDecimal area = new BigDecimal("100.00");
-        return new OrderDetail(customerName, productType.getProductType(), area, state);
 
+        return new Order(Util.capitalizeFirstWord(customerName), productType.getProductType(), area, state);
     }
 
     public Product getProductType(List<Product> allProducts) {
 
         displayProducts(allProducts);
 
-        int productIndex = io.readInt("Please select a product", 1, allProducts.size());
+        int productIndex = io.readInt("Please select a product:  ", 1, allProducts.size());
 
         return allProducts.get(productIndex - 1);
 
@@ -205,33 +417,22 @@ public class FlooringMasteryView {
             p = products.get(i);
             //display projecy
             displayProducts(i, p.getProductType(), p.getLaborCostPerSquareFoot(), p.getLaborCostPerSquareFoot());
+            io.print("___________________________________________________");
         }
         displaySpace();
-
     }
 
     public void displayGoToMainMenu() {
         io.readString("Press Enter to go to Main Menu.");
     }
 
-    private void displayAvailableProducts() {
-
-        io.print("*******************************");
-        io.print("*******************************");
-        io.print("****** Available Products *****");
-        io.print("*******************************");
-
-    }
-
     public void displayOutOfProducts() {
-        io.print("Sorry we are out of products at the moment try again");
+        io.print("Sorry we are out of products at the moment.");
         displaySpace();
         displayGoToMainMenu();
-
     }
 
     private void displayProducts(int index, String ProductType, BigDecimal CostPerSqFt, BigDecimal LaborCostPerSqFt) {
-
         //display products formatted
         System.out.printf("|%-6d|%13s|%11s|%16s|  \n", index + 1, ProductType, Util.appendToMoney(CostPerSqFt), Util.appendToMoney(LaborCostPerSqFt));
     }
@@ -258,17 +459,19 @@ public class FlooringMasteryView {
         return orderNumber;
     }
 
-    public void displayAllOrders(List<Order> orders) {
+    public void displayAllOrders(List<Order> orders, String day) {
+
+        displayDayOrders(day);
         //display header for fields
-        io.print("_______________________________________________________________________________________________________________________________________________________");
-        System.out.printf("|%5s|%18s|%5s|%10s|%10s|%10s|%12s|%12s|%10s|%13s|%10s|%10s \n", "OrderNumber", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
-        io.print("-------------------------------------------------------------------------------------------------------------------------------------------------------");
+        io.print("_____________________________________________________________________________________________________________________________________________________________");
+        System.out.printf("| %5s|%18s|%5s|%10s|%10s|%16s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderNumber", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
+        io.print("-------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         //initiize order
         Order o;
 
         if (orders.isEmpty()) {
-            io.print("There are no Order To Display");
+            io.print("There are no Order To Display.");
 
         } else {
             for (int i = 0; i < orders.size(); i++) {
@@ -290,7 +493,7 @@ public class FlooringMasteryView {
         String state = order.getState();
         String taxRate = Util.addPercentage(order.getTaxRate());
         String productType = order.getProductType();
-        String area = Util.BigDecimalToString(order.getArea());
+        String area = Util.BigDecimalToString(order.getArea()) + " Sqft";
         String costPerSquareFoot = Util.appendToMoney(order.getCostPerSquareFoot());
         String laborCostPerSquareFoot = Util.appendToMoney(order.getLaborCostPerSquareFoot());
         String materialCost = Util.appendToMoney(order.getMaterialCost());
@@ -299,8 +502,8 @@ public class FlooringMasteryView {
         String total = Util.appendToMoney(order.getTotal());
 
         //display products formatted
-        System.out.printf("|%11d|%18s|%5s|%10s|%11s|%10s|%12s|%16s|%12s|%13s|%10s|%10s \n", orderNumber, customerName, state, taxRate, productType, area, costPerSquareFoot, materialCost, laborCostPerSquareFoot, laborCost, tax, total);
-
+        System.out.printf("| %11d|%18s|%5s|%10s|%11s|%16s|%12s|%16s|%12s|%13s|%10s|%10s| \n", orderNumber, customerName, state, taxRate, productType, area, costPerSquareFoot, materialCost, laborCostPerSquareFoot, laborCost, tax, total);
+        io.print("_____________________________________________________________________________________________________________________________________________________________");
     }
 
     public void displayErrorMessage(String errorMsg) {
@@ -315,12 +518,49 @@ public class FlooringMasteryView {
         displayGoToMainMenu();
     }
 
+    private void displayReviewOrder() {
+
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("*************** Review Order **************");
+        io.print("*******************************************");
+
+    }
+
+    private void displayFoundOrder() {
+
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("*************** Found Order ***************");
+        io.print("*******************************************");
+
+    }
+
+    public void displayOrderNotFound() {
+
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("************* Order Not Found *************");
+        io.print("*******************************************");
+
+        displayGoToMainMenu();
+
+    }
+
     public void displayAllOrdersBanner() {
         io.print("*******************************************");
         io.print("*******************************************");
         io.print("*********** Display All Orders ************");
         io.print("*******************************************");
         displaySpace();
+    }
+
+    private void displayAvailableProducts() {
+
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("************ Available Products ***********");
+        io.print("*******************************************");
 
     }
 
@@ -328,6 +568,24 @@ public class FlooringMasteryView {
         io.print("*******************************************");
         io.print("*******************************************");
         io.print("************** Add An order ***************");
+        io.print("*******************************************");
+        displaySpace();
+
+    }
+
+    public void displayEditOrderBanner() {
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("************** Edit An order ***************");
+        io.print("*******************************************");
+        displaySpace();
+
+    }
+
+    public void displayDayOrders(String day) {
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("************ " + day + " Orders ************");
         io.print("*******************************************");
         displaySpace();
 

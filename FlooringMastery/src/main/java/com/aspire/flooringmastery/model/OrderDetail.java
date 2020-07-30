@@ -34,22 +34,9 @@ public class OrderDetail {
         this.state = state;
     }
 
-//    public OrderDetail(Integer orderNumber, String customerName, String productType, BigDecimal area, String state, BigDecimal taxRate,
-//            BigDecimal costPerSquareFoot, BigDecimal laborCostPerSquareFoot, BigDecimal materialCost, BigDecimal laborCost, BigDecimal tax,
-//            BigDecimal total) {
-//        this.orderNumber = orderNumber;
-//        this.customerName = customerName;
-//        this.productType = productType;
-//        this.area = area;
-//        this.state = state;
-//        this.taxRate = taxRate;
-//        this.costPerSquareFoot = costPerSquareFoot;
-//        this.laborCostPerSquareFoot = laborCostPerSquareFoot;
-//        this.materialCost = materialCost;
-//        this.laborCost = laborCost;
-//        this.tax = tax;
-//        this.total = total;
-//    }
+    public OrderDetail() {
+    }
+
     public Integer getOrderNumber() {
         return orderNumber;
     }

@@ -7,7 +7,6 @@ package com.aspire.flooringmastery.controller;
 
 import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.model.Order;
-import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.service.FlooringMasteryCustomerNameException;
 import com.aspire.flooringmastery.service.FlooringMasteryInvalidStateException;
@@ -41,7 +40,7 @@ public class FlooringMasteryController {
 
                 switch (menuSelection) {
                     case 1:
-                        displayOrder();
+                        displayOrders();
                         break;
                     case 2:
                         addOrder();
@@ -84,11 +83,11 @@ public class FlooringMasteryController {
         return view.printMenuAndGetSelection();
     }
 
-    private void displayOrder() throws FlooringMasteryPersistenceException {
+    private void displayOrders() throws FlooringMasteryPersistenceException {
         view.displayAllOrdersBanner();
 
         //get date of order
-        String date = view.getOrderDateToDisplayAllOrders();
+        String date = view.getOrderDateNoRestriction();
 
         //get all orders from file
         List<Order> allOrders = service.getAllOrders(date);
@@ -100,7 +99,7 @@ public class FlooringMasteryController {
         view.displayQuerying(date, orderSize);
 
         if (orderSize != 0) {
-            view.displayAllOrders(allOrders);
+            view.displayAllOrders(allOrders, date);
         }
 
     }
@@ -112,19 +111,18 @@ public class FlooringMasteryController {
 
         List<String> allStates = service.getAllStates();
 
+        //no products to sell
         if (allProducts.size() == 0) {
 
             view.displayOutOfProducts();
 
         } else {
-
-//            String orderDate = view.getOrderDate();
             String orderDate = "07/31/2021";
 
-            OrderDetail orderDetails = view.getOrderDetails(allProducts, allStates);
+            Order orderDetails = view.getOrderDetails(allProducts, allStates);
 
-            OrderDetail orderDetailsSummary = service.calculateCosts(orderDetails);
-            boolean orderToPlace = view.displayOrderDetails(orderDetailsSummary, orderDate);
+            Order orderDetailsSummary = service.calculateCosts(orderDetails);
+            boolean orderToPlace = view.displayOrderDetails(orderDetailsSummary, orderDate, true);
 
             if (orderToPlace) {
 
@@ -139,8 +137,55 @@ public class FlooringMasteryController {
 
     }
 
-    private void editOrder() {
-        System.out.println("edit orders");
+    private void editOrder() throws FlooringMasteryPersistenceException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException {
+
+        view.displayEditOrderBanner();
+
+        List<Product> allProducts = service.getAllProducts();
+
+        List<String> allStates = service.getAllStates();
+
+        String orderDate = view.getOrderDateNoRestriction();
+
+        Integer orderNumber = view.getOrderNumber();
+
+        Order foundOrder = service.getOrder(orderDate, orderNumber);
+
+        if (foundOrder != null) {
+
+            boolean editOrder = view.displayFoundOrder(foundOrder, orderDate);
+
+            if (editOrder) {
+
+                Order returnedOrder = view.displayOrderToEdit(foundOrder, allStates, allProducts);
+
+                if (foundOrder.equals(returnedOrder)) {
+                    System.out.println(" same nothing chnaged");
+
+                    view.displayEditOrderDetails(returnedOrder, orderDate);
+
+                } else {
+                    //calculate changes
+                    Order updatedOrder = service.calculateCosts(returnedOrder);
+
+                    System.out.println("things chnaged  we calculate now");
+                    //display changes
+
+                    boolean orderToUpdate = view.displayOrderDetails(updatedOrder, orderDate, false);
+                    if (orderToUpdate) {
+                        service.editOrder(updatedOrder, orderNumber, orderDate);
+                    } else {
+                        view.displayGoToMainMenu();
+                    }
+                }
+            } else {
+                view.displayGoToMainMenu();
+            }
+        } else {
+
+            view.displayOrderNotFound();
+        }
+
     }
 
     private void removeOrder() {

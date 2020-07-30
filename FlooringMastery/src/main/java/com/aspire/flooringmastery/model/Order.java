@@ -27,19 +27,26 @@ public class Order {
     private BigDecimal tax;
     private BigDecimal total;
 
-    public Order(Integer orderNumber, OrderDetail OrderDetail) {
+    public Order(String customerName, String productType, BigDecimal area, String state) {
+        this.customerName = customerName;
+        this.productType = productType;
+        this.area = area;
+        this.state = state;
+    }
+
+    public Order(Integer orderNumber, Order order) {
         this.orderNumber = orderNumber;
-        this.customerName = OrderDetail.getCustomerName();
-        this.state = OrderDetail.getState();
-        this.taxRate = OrderDetail.getTaxRate();
-        this.productType = OrderDetail.getProductType();
-        this.area = OrderDetail.getArea();
-        this.costPerSquareFoot = OrderDetail.getCostPerSquareFoot();
-        this.laborCostPerSquareFoot = OrderDetail.getLaborCostPerSquareFoot();
-        this.materialCost = OrderDetail.getMaterialCost();
-        this.laborCost = OrderDetail.getLaborCost();
-        this.tax = OrderDetail.getTax();
-        this.total = OrderDetail.getTotal();
+        this.customerName = order.getCustomerName();
+        this.state = order.getState();
+        this.taxRate = order.getTaxRate();
+        this.productType = order.getProductType();
+        this.area = order.getArea();
+        this.costPerSquareFoot = order.getCostPerSquareFoot();
+        this.laborCostPerSquareFoot = order.getLaborCostPerSquareFoot();
+        this.materialCost = order.getMaterialCost();
+        this.laborCost = order.getLaborCost();
+        this.tax = order.getTax();
+        this.total = order.getTotal();
     }
 
     public Order(Integer orderNumber, String customerName, String state, BigDecimal taxRate, String productType, BigDecimal area,
@@ -59,8 +66,20 @@ public class Order {
         this.total = total;
     }
 
-    public void setOrderNumber(Integer orderNumber) {
-        this.orderNumber = orderNumber;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public void setArea(BigDecimal area) {
+        this.area = area;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public void setTaxRate(BigDecimal taxRate) {
