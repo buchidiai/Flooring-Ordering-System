@@ -13,9 +13,7 @@ import java.math.BigDecimal;
  */
 public class Order {
 
-    //orderDate, customerName, state, productType, area
     private Integer orderNumber;
-
     private String customerName;
     private String productType;
     private BigDecimal area;
@@ -29,11 +27,19 @@ public class Order {
     private BigDecimal tax;
     private BigDecimal total;
 
-    public Order(String customerName, String productType, BigDecimal area, String state) {
-        this.customerName = customerName;
-        this.productType = productType;
-        this.area = area;
-        this.state = state;
+    public Order(Integer orderNumber, OrderDetail OrderDetail) {
+        this.orderNumber = orderNumber;
+        this.customerName = OrderDetail.getCustomerName();
+        this.state = OrderDetail.getState();
+        this.taxRate = OrderDetail.getTaxRate();
+        this.productType = OrderDetail.getProductType();
+        this.area = OrderDetail.getArea();
+        this.costPerSquareFoot = OrderDetail.getCostPerSquareFoot();
+        this.laborCostPerSquareFoot = OrderDetail.getLaborCostPerSquareFoot();
+        this.materialCost = OrderDetail.getMaterialCost();
+        this.laborCost = OrderDetail.getLaborCost();
+        this.tax = OrderDetail.getTax();
+        this.total = OrderDetail.getTotal();
     }
 
     public Order(Integer orderNumber, String customerName, String state, BigDecimal taxRate, String productType, BigDecimal area,
@@ -51,6 +57,10 @@ public class Order {
         this.laborCost = laborCost;
         this.tax = tax;
         this.total = total;
+    }
+
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public void setTaxRate(BigDecimal taxRate) {

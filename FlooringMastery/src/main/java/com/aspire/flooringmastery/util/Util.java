@@ -16,10 +16,17 @@ import java.util.regex.Pattern;
  */
 public class Util {
 
+    public static String getTodaysDate() {
+
+        LocalDate today = LocalDate.now();
+
+        String[] day = Util.formatDate(today).split("/");
+        String orderDate = day[0] + day[1] + day[2];
+        return orderDate;
+    }
+
     public static String addPercentage(BigDecimal big) {
-
         return big + "%";
-
     }
 
     public static String formatDate(LocalDate date, int daysToAdd) {

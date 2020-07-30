@@ -6,6 +6,7 @@
 package com.aspire.flooringmastery.ui;
 
 import com.aspire.flooringmastery.model.Order;
+import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.util.Util;
 import java.math.BigDecimal;
@@ -84,7 +85,7 @@ public class FlooringMasteryView {
 
     }
 
-    public boolean displayOrderDetails(Order orderDetail, String orderDate) {
+    public boolean displayOrderDetails(OrderDetail orderDetail, String orderDate) {
 
         displayReviewOrder();
 
@@ -101,15 +102,8 @@ public class FlooringMasteryView {
 
     }
 
-    private void displayOrders(Order orderDetail, String orderDate) {
-//
-//        //Product object ~> has productType, costPerSquareFoot,laborCostPerSquareFoot
-//        Product product = orderDetail.getProduct();
-//
-//        //Tax object ~> has stateAbbreviation, stateName,taxRate
-//        Tax tax = orderDetail.getTaxInfo();
+    private void displayOrders(OrderDetail orderDetail, String orderDate) {
 
-        //to display
         //date of order
         String dateOfOrder = orderDate;
 
@@ -153,14 +147,15 @@ public class FlooringMasteryView {
         return placorder;
     }
 
-    public Order getOrderDetails(List<Product> allProducts, List<String> allStates) {
+    public OrderDetail getOrderDetails(List<Product> allProducts, List<String> allStates) {
 
         boolean validState = true;
         String state = "";
 
         //not valid
         //ask first name
-        String customerName = io.readString("Please enter Customer name: e.g - Acme, Inc.  ");
+//        String customerName = io.readString("Please enter Customer name: e.g - Acme, Inc.  ");
+        String customerName = "test name";
 
         //validate state
         while (validState) {
@@ -180,9 +175,9 @@ public class FlooringMasteryView {
         //ask for Product
         Product productType = getProductType(allProducts);
         // ask area
-        BigDecimal area = io.readBigDecimal("Please enter an Area:  e.g 200");
-
-        return new Order(customerName, productType.getProductType(), area, state);
+        //   BigDecimal area = io.readBigDecimal("Please enter an Area:  e.g 200");
+        BigDecimal area = new BigDecimal("100.00");
+        return new OrderDetail(customerName, productType.getProductType(), area, state);
 
     }
 

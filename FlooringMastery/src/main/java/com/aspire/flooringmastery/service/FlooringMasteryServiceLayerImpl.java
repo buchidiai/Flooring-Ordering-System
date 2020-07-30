@@ -11,6 +11,7 @@ import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.dao.FlooringMasteryProductDao;
 import com.aspire.flooringmastery.dao.FlooringMasteryTaxDao;
 import com.aspire.flooringmastery.model.Order;
+import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.model.Tax;
 import java.math.BigDecimal;
@@ -39,15 +40,14 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     @Override
-    public Order addOrder(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
+    public Order addOrder(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
 
-//        orderDao.addOrder(orderDetail);
-        return null;
+        return orderDao.addOrder(orderDetail);
 
     }
 
     @Override
-    public Order calculcateCosts(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
+    public OrderDetail calculateCosts(OrderDetail orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
 
         //customer name entered
         String customerName = orderDetail.getCustomerName();
@@ -82,7 +82,6 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
         BigDecimal tax = (materialCost.add(laborCost)).multiply(taxForState.getTaxRate().divide(new BigDecimal("100.00"))).setScale(2, RoundingMode.CEILING);
         BigDecimal total = (materialCost.add(laborCost.add(tax)));
 
-        //set values
         orderDetail.setCostPerSquareFoot(productForSale.getCostPerSquareFoot());
         orderDetail.setLaborCostPerSquareFoot(productForSale.getLaborCostPerSquareFoot());
         orderDetail.setTaxRate(taxForState.getTaxRate());

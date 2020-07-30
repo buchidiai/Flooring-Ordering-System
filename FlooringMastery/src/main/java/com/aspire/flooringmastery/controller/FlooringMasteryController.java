@@ -7,6 +7,7 @@ package com.aspire.flooringmastery.controller;
 
 import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.model.Order;
+import com.aspire.flooringmastery.model.OrderDetail;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.service.FlooringMasteryCustomerNameException;
 import com.aspire.flooringmastery.service.FlooringMasteryInvalidStateException;
@@ -117,12 +118,12 @@ public class FlooringMasteryController {
 
         } else {
 
-            String orderDate = view.getOrderDate();
+//            String orderDate = view.getOrderDate();
+            String orderDate = "07/31/2021";
 
-            Order orderDetails = view.getOrderDetails(allProducts, allStates);
+            OrderDetail orderDetails = view.getOrderDetails(allProducts, allStates);
 
-            Order orderDetailsSummary = service.calculcateCosts(orderDetails);
-
+            OrderDetail orderDetailsSummary = service.calculateCosts(orderDetails);
             boolean orderToPlace = view.displayOrderDetails(orderDetailsSummary, orderDate);
 
             if (orderToPlace) {
@@ -134,7 +135,6 @@ public class FlooringMasteryController {
                 view.displayGoToMainMenu();
 
             }
-
         }
 
     }

@@ -6,6 +6,7 @@
 package com.aspire.flooringmastery.dao;
 
 import com.aspire.flooringmastery.model.Order;
+import com.aspire.flooringmastery.model.OrderDetail;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public interface FlooringMasteryOrderDao {
 
-    Order addOrder(Order orderDetail);
+    Order addOrder(OrderDetail orderDetail) throws FlooringMasteryPersistenceException;
 
     Order editOrder(Integer OrderNumber);
 
