@@ -578,16 +578,37 @@ public class FlooringMasteryView {
     public void displayAddOrderBanner() {
         io.print("*******************************************");
         io.print("*******************************************");
-        io.print("************** Add An order ***************");
+        io.print("************** Add An Order ***************");
         io.print("*******************************************");
         displaySpace();
+
+    }
+
+    public void displayAddOrderSucess() {
+        displayDots();
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("********* Add Order Was Successful ********");
+        io.print("*******************************************");
+        displaySpace();
+        displayGoToMainMenu();
 
     }
 
     public void displayEditOrderBanner() {
         io.print("*******************************************");
         io.print("*******************************************");
-        io.print("************** Edit An order **************");
+        io.print("************** Edit An Order **************");
+        io.print("*******************************************");
+        displaySpace();
+
+    }
+
+    public void displayEditOrderSucess() {
+        displayDots();
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("********* Edit Order Was Successful *******");
         io.print("*******************************************");
         displaySpace();
 
@@ -596,15 +617,34 @@ public class FlooringMasteryView {
     public void displayRemoveOrderBanner() {
         io.print("*******************************************");
         io.print("*******************************************");
-        io.print("************* Remove An order *************");
+        io.print("************* Remove An Order *************");
         io.print("*******************************************");
         displaySpace();
 
     }
 
     public void displayRemoveSuccess() {
+        displayDots();
         io.print("*******************************************");
-        io.print("******* Order was removed Successful ******");
+        io.print("******** Remove Order Was Successful ******");
+        io.print("*******************************************");
+        displaySpace();
+
+    }
+
+    public void displayExportSuccess() {
+        displayDots();
+        io.print("*******************************************");
+        io.print("*********** Export Was Successful *********");
+        io.print("*******************************************");
+        displaySpace();
+
+    }
+
+    public void displayExportFail() {
+        displayDots();
+        io.print("*******************************************");
+        io.print("*************** Export Failed *************");
         io.print("*******************************************");
         displaySpace();
 
@@ -621,6 +661,21 @@ public class FlooringMasteryView {
 
     public void displaySpace() {
         io.print("");
+
+    }
+
+    public void displayUnkownCommand() {
+        io.print("*******************************************");
+        io.print("************ Unknown - Command ************");
+        io.print("*******************************************");
+        displaySpace();
+
+    }
+
+    public void displayExit() {
+        io.print("*******************************************");
+        io.print("***************** Good-Bye ****************");
+        io.print("*******************************************");
 
     }
 

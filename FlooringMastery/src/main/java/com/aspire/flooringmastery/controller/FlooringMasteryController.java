@@ -130,6 +130,8 @@ public class FlooringMasteryController {
                 //add order
                 service.addOrder(orderDetails);
 
+                view.displayAddOrderSucess();
+
             } else {
                 //if no
                 //send to main menu
@@ -184,6 +186,8 @@ public class FlooringMasteryController {
                     if (orderToUpdate) {
                         service.editOrder(updatedOrder, orderNumber, orderDate);
 
+                        view.displayEditOrderSucess();
+
                     } else {
                         //if no then go to main menu
                         view.displayGoToMainMenu();
@@ -234,16 +238,25 @@ public class FlooringMasteryController {
 
     }
 
-    private void exportAllData() {
-        System.out.println("Export all Data");
+    private void exportAllData() throws FlooringMasteryPersistenceException {
+        boolean exported = service.exportOrder();
+
+        if (exported) {
+            view.displayExportSuccess();
+        } else {
+            view.displayExportFail();
+        }
+
+        view.displayGoToMainMenu();
+
     }
 
     private void unknownCommand() {
-        System.out.println("Unknown command");
+        view.displayUnkownCommand();
     }
 
     private void exitMessage() {
-        System.out.println("goodbye");
+        view.displayExit();
     }
 
     private void showErrorMsg(String errorMsg) {

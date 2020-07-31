@@ -26,6 +26,8 @@ public class Util {
     }
 
     public static String addPercentage(BigDecimal big) {
+
+        String templateFormat = "code:%1$s-%2$s-100";
         return big + "%";
     }
 

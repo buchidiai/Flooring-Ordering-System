@@ -20,7 +20,7 @@ public interface FlooringMasteryOrderDao {
 
     boolean removeOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException;
 
-    void exportOrder();
+    boolean exportOrders() throws FlooringMasteryPersistenceException;
 
     Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException;
 

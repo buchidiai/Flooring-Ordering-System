@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -26,40 +27,52 @@ import java.util.Scanner;
 public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     private final String ORDER_FOLDER;
+    private final String BACKUP_FOLDER;
     private static Integer MAX_ORDER_NUMBER = 0;
     private final String ORDER_FILE_NAME;
+    private final String BACKUP_FILE_NAME;
     private static final String DELIMITER = ",";
-    public static final int NUMBER_OF_FIELDS = 12;
+    private static final int NUMBER_OF_FIELDS = 12;
+    private static final String HEADER = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
 
     private List<Order> orders = new ArrayList<>();
 
     public FlooringMasteryOrderDaoImpl() {
         this.ORDER_FOLDER = "Orders/";
         this.ORDER_FILE_NAME = "Orders_";
+        this.BACKUP_FOLDER = "Backup/";
+        this.BACKUP_FILE_NAME = "DataExport.txt";
     }
 
-    public FlooringMasteryOrderDaoImpl(String ORDER_FOLDER, String ORDER_FILE_NAME) {
+    public FlooringMasteryOrderDaoImpl(String ORDER_FOLDER, String ORDER_FILE_NAME, String BACKUP_FOLDER, String BACKUP_FILE_NAME) {
         this.ORDER_FOLDER = ORDER_FOLDER;
         this.ORDER_FILE_NAME = ORDER_FILE_NAME;
+        this.BACKUP_FOLDER = BACKUP_FOLDER;
+        this.BACKUP_FILE_NAME = BACKUP_FILE_NAME;
     }
 
     @Override
     public Order addOrder(Order OrderDetail) throws FlooringMasteryPersistenceException {
-
+        //load orders of the day (not passed in date but actually day this order will be placed) and order will be added
         loadOrders(Util.getTodaysDate());
+        //create new object with id max id
+        //max id is found when orders are loaded from loadOrders()
         Order orderAdded = new Order((MAX_ORDER_NUMBER), OrderDetail);
+        //add order to list of orders
         orders.add(orderAdded);
+        //write orders in memory to file of order_day.txt
         writeOrder();
+        //return order
         return orderAdded;
     }
 
     @Override
     public Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
 
-        loadOrders(orderDate);
-
+        //call getOrder to get the order and edit it
         Order originalOrder = getOrder(orderDate, orderNumber);
 
+        //if order is not null, set values
         if (originalOrder != null) {
             originalOrder.setCustomerName(order.getCustomerName());
             originalOrder.setProductType(order.getProductType());
@@ -72,60 +85,145 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
             originalOrder.setLaborCost(order.getLaborCost());
             originalOrder.setTax(order.getTax());
             originalOrder.setTotal(order.getTotal());
+            //write changes to file_date.txt
             writeOrder(orderDate);
         }
-
         return originalOrder;
     }
 
     @Override
     public boolean removeOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
 
-        loadOrders(orderDate);
         boolean removedOrder = false;
-
+        //call getOrder to get the order and remove it
         Order originalOrder = getOrder(orderDate, orderNumber);
+        //if order is not null
         if (originalOrder != null) {
+            //remove order from orders list
             if (orders.remove(order)) {
                 removedOrder = true;
+                //write changes to file_date.txt
                 writeOrder(orderDate);
 
             }
 
         }
-
+        //return removed order
         return removedOrder;
     }
 
     @Override
-    public void exportOrder() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean exportOrders() throws FlooringMasteryPersistenceException {
+        return exportAllOrders();
     }
 
     @Override
     public Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException {
+        //load orders of the day of the order that will be edited
+        //this is needed for remove order, edit order and get order to load orders of their date
+        //i am using to reduce calls to loadOrders
         loadOrders(orderDate);
 
         Order orderFound = null;
 
         for (Order o : orders) {
-            if (o.getOrderNumber() == orderNumber) {
+            //find order with matching order number and return it
+            if (Objects.equals(o.getOrderNumber(), orderNumber)) {
                 orderFound = o;
                 break;
             }
         }
+        //return found order
         return orderFound;
+    }
+
+    private boolean exportAllOrders() throws FlooringMasteryPersistenceException {
+        // System.out.println("ok exporting all data");
+        Scanner scanner = null;
+        boolean addedHeader = false;
+        PrintWriter out;
+
+        //file object
+        File ordersDirectory = new File(ORDER_FOLDER);
+        File backupDirectory = new File(BACKUP_FOLDER);
+        File backupFile = new File(BACKUP_FOLDER + BACKUP_FILE_NAME);
+
+        //check if directory exists
+        if (isExistingDir(ordersDirectory) && isExistingDir(backupDirectory)) {
+
+            //it exists lets check if there are any files
+            File[] dir_contents = ordersDirectory.listFiles();
+
+            //get file in directory
+            for (File f : dir_contents) {
+
+                //get file date and ext
+                String fileDate = f.getName().split("_")[1].split("\\.")[0];
+
+                try {
+                    //write to backup
+                    out = new PrintWriter(new FileWriter(backupFile, true));
+                    // Create Scanner for reading the file
+                    scanner = new Scanner(
+                            new BufferedReader(
+                                    new FileReader(f)));
+
+                } catch (IOException e) {
+
+                    throw new FlooringMasteryPersistenceException(
+                            "-_- Could not load order data into memory.", e);
+                }
+
+                //if file is not null
+                if (scanner != null) {
+
+                    String orderAsText = "";
+
+                    while (scanner.hasNextLine()) {
+
+                        // get the next line in the file
+                        orderAsText = scanner.nextLine();
+
+                        if ((orderAsText.startsWith("OrderNumber"))) {
+
+                            if (!addedHeader) {
+                                orderAsText += ",OrderDate";
+                                out.println(orderAsText);
+                                out.flush();
+                            }
+                            addedHeader = true;
+                        } else {
+                            orderAsText += "," + fileDate;
+                            out.println(orderAsText);
+                            out.flush();
+                        }
+                    }
+
+                }
+
+            }
+            // close scanner
+            scanner.close();
+
+        } else {
+            //directory doesnt exist ~> create and add to file it
+
+            System.out.println("dir doesnt exist");
+
+        }
+        return true;
     }
 
     @Override
     public List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException {
+        //load order by date to memory
         loadOrders(orderDate);
 
         return orders;
     }
 
     private void writeOrder(String date) throws FlooringMasteryPersistenceException {
-        System.out.println("ok write order to file from memory");
+        //   System.out.println("ok write order to file from memory");
         // date + .txt extension
         String orderDate = Util.cleanDate(date) + ".txt";
 
@@ -146,7 +244,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     }
 
     private void writeOrder() throws FlooringMasteryPersistenceException {
-        System.out.println("ok write order to file from memory");
+//        System.out.println("ok write order to file from memory");
         // date + .txt extension
         String orderDate = Util.getTodaysDate() + ".txt";
 
@@ -167,12 +265,13 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     }
 
     public void writeOrderObject(String orderDay) throws FlooringMasteryPersistenceException {
-        System.out.println("ok Write to file from Memory");
+//        System.out.println("ok Write to file from Memory");
         PrintWriter out;
         String fileLocation = ORDER_FOLDER + ORDER_FILE_NAME + orderDay;
 
         Scanner scanner = null;
         try {
+
             out = new PrintWriter(new FileWriter(fileLocation));
 
             scanner = new Scanner(
@@ -190,12 +289,10 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         String orderAsText;
 
         //add header to file
-        String header = "OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total";
-
         File file = new File(ORDER_FOLDER + ORDER_FILE_NAME + orderDay);
 
         if (file.length() == 0) {
-            out.println(header);
+            out.println(HEADER);
         }
 
         for (Order currentOrder : orders) {
@@ -206,20 +303,16 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
             out.println(orderAsText);
             out.flush();
 
-            // Clean up
-            out.close();
-
         }
-
-
-
-
+        // Clean up
+        out.close();
+    }
 
     private String marshallOrder(Order aOrder) {
         // We need to turn a Order object into a line of text for our file.
         // For example, we need an in memory object to end up like this:
         // chips::2.50::10
-        System.out.println("marshallOrder ~> write to file " + aOrder.getCustomerName() + " , " + aOrder.getOrderNumber());
+//        System.out.println("marshallOrder ~> write to file " + aOrder.getCustomerName() + " , " + aOrder.getOrderNumber());
         // It's not a complicated process. Just get out each property,
         // and concatenate with our DELIMITER as a kind of spacer.
         // Start with the order id, since that's supposed to be first.
@@ -271,7 +364,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     // load order from text file
     private void loadOrders(String orderDate) throws FlooringMasteryPersistenceException {
-        System.out.println("ok Load-orders into memory from file ");
+//        System.out.println("ok Load-orders into memory from file ");
         Scanner scanner = null;
         boolean foundOrdersForDate = false;
         //order date + .txt extension
