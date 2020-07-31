@@ -86,10 +86,10 @@ public class FlooringMasteryController {
     private void displayOrders() throws FlooringMasteryPersistenceException {
         view.displayAllOrdersBanner();
 
-        //get date of order
+        //get date/day of orders you want to view
         String date = view.getOrderDateNoRestriction();
 
-        //get all orders from file
+        //get all orders from file in a list
         List<Order> allOrders = service.getAllOrders(date);
 
         //order size
@@ -97,7 +97,6 @@ public class FlooringMasteryController {
 
         //display results
         view.displayQuerying(date, orderSize);
-
         if (orderSize != 0) {
             view.displayAllOrders(allOrders, date);
         }
@@ -107,29 +106,33 @@ public class FlooringMasteryController {
     private void addOrder() throws FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException {
         view.displayAddOrderBanner();
 
+        //get all products available
         List<Product> allProducts = service.getAllProducts();
-
+        //get allstates avaiable
         List<String> allStates = service.getAllStates();
 
         //no products to sell
         if (allProducts.size() == 0) {
-
+            //display were out of products
             view.displayOutOfProducts();
 
         } else {
-            String orderDate = "07/31/2021";
-
+            //get date for when order is needed
+            String orderDate = view.getOrderDateRestricted();
+            //get order details ~> customer name, producttype, state, and area
             Order orderDetails = view.getOrderDetails(allProducts, allStates);
-
+            //calculate costs of order
             Order orderDetailsSummary = service.calculateCosts(orderDetails);
+            //ask customer to confirm order
             boolean orderToPlace = view.displayOrderDetails(orderDetailsSummary, orderDate, true);
-
+            //if yes
             if (orderToPlace) {
-
+                //add order
                 service.addOrder(orderDetails);
 
             } else {
-
+                //if no
+                //send to main menu
                 view.displayGoToMainMenu();
 
             }
@@ -141,55 +144,94 @@ public class FlooringMasteryController {
 
         view.displayEditOrderBanner();
 
+        //get all products available
         List<Product> allProducts = service.getAllProducts();
-
+        //get allstates avaiable
         List<String> allStates = service.getAllStates();
 
+        //get date/day when order was placed
         String orderDate = view.getOrderDateNoRestriction();
-
+        //get order number
         Integer orderNumber = view.getOrderNumber();
-
+        //find order
         Order foundOrder = service.getOrder(orderDate, orderNumber);
 
+        //if order not null
         if (foundOrder != null) {
+            //display order and ask if they want to edit
+            boolean editOrder = view.displayFoundOrder(foundOrder, orderDate, false);
 
-            boolean editOrder = view.displayFoundOrder(foundOrder, orderDate);
-
+            //if yes
             if (editOrder) {
-
+                //let them make changes
                 Order returnedOrder = view.displayOrderToEdit(foundOrder, allStates, allProducts);
 
+                //if there are no chnages
                 if (foundOrder.equals(returnedOrder)) {
-                    System.out.println(" same nothing chnaged");
 
+                    //display order and let them know there are no chnages and send them to main menu
                     view.displayEditOrderDetails(returnedOrder, orderDate);
 
                 } else {
+                    //there were changes
                     //calculate changes
                     Order updatedOrder = service.calculateCosts(returnedOrder);
 
-                    System.out.println("things chnaged  we calculate now");
                     //display changes
-
+                    //ask if they want to update order
                     boolean orderToUpdate = view.displayOrderDetails(updatedOrder, orderDate, false);
+                    //if yes then update order
                     if (orderToUpdate) {
                         service.editOrder(updatedOrder, orderNumber, orderDate);
+
                     } else {
+                        //if no then go to main menu
                         view.displayGoToMainMenu();
                     }
                 }
             } else {
+                //if they dont want to edit go to main menu
                 view.displayGoToMainMenu();
             }
-        } else {
 
+        } else {
+            // order is null to to main menu
             view.displayOrderNotFound();
         }
 
     }
 
-    private void removeOrder() {
-        System.out.println("remove orders");
+    private void removeOrder() throws FlooringMasteryPersistenceException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException {
+
+        //get date/day when order was placed
+        String orderDate = view.getOrderDateNoRestriction();
+        //get order number
+        Integer orderNumber = view.getOrderNumber();
+        //find order
+        Order foundOrder = service.getOrder(orderDate, orderNumber);
+
+        //if order not null
+        if (foundOrder != null) {
+            //display order and ask if they want to delete
+            boolean deleteOrder = view.displayFoundOrder(foundOrder, orderDate, true);
+
+            //if yes
+            if (deleteOrder) {
+                //remove order
+                service.removeOrder(foundOrder, orderNumber, orderDate);
+                //show success
+                view.displayRemoveSuccess();
+                //go to main menu
+                view.displayGoToMainMenu();
+            }
+
+        } else {
+            //order was null
+            //display not found
+            //go to main menu
+            view.displayOrderNotFound();
+        }
+
     }
 
     private void exportAllData() {

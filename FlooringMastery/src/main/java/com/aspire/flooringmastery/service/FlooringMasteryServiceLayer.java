@@ -22,7 +22,7 @@ public interface FlooringMasteryServiceLayer {
 
     Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException;
 
-    boolean removeOrder(Integer OrderNumber);
+    boolean removeOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException;
 
     void exportOrder();
 

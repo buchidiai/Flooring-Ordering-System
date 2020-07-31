@@ -42,7 +42,7 @@ public class FlooringMasteryView {
 
     }
 
-    public boolean displayFoundOrder(Order order, String orderDate) {
+    public boolean displayFoundOrder(Order order, String orderDate, boolean askToDelete) {
 
         displayFoundOrder();
 
@@ -55,7 +55,7 @@ public class FlooringMasteryView {
 
         displaySpace();
 
-        return askToEditOrder();
+        return askToDelete ? askToDeleteOrder() : askToEditOrder();
 
     }
 
@@ -92,6 +92,7 @@ public class FlooringMasteryView {
 
         //display products formatted
         System.out.printf("|%13s|%18s|%5s|%10s|%11s|%10s|%12s|%16s|%12s|%13s|%10s|%10s| \n", dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
+        io.print("_________________________________________________________________________________________________________________________________________________________");
         displaySpace();
         io.print("Your order for " + productType + " with an area of " + area + " Sqft in " + state + " totaling in " + total + " was found.");
 
@@ -99,9 +100,16 @@ public class FlooringMasteryView {
 
     private boolean askToEditOrder() {
 
-        boolean placorder = io.readYesOrNo("Would you like to Edit this order? (Yes/No) ");
+        boolean placOrder = io.readYesOrNo("Would you like to Edit this order? (Yes/No) ");
 
-        return placorder;
+        return placOrder;
+    }
+
+    private boolean askToDeleteOrder() {
+
+        boolean deleteOrder = io.readYesOrNo("Would you like to Delete this order? (Yes/No) ");
+
+        return deleteOrder;
     }
 
     public String getOrderDateNoRestriction() {
@@ -365,31 +373,41 @@ public class FlooringMasteryView {
     }
 
     public Order getOrderDetails(List<Product> allProducts, List<String> allStates) {
-
-        boolean validState = true;
         String state = "";
 
         //ask first name
-        String customerName = io.readString("Please enter Customer name: e.g - Acme, Inc.");
+        String customerName = io.readString("Please enter Customer name: e.g - Walmart, Inc");
 
+        while (customerName.isEmpty()) {
+            io.print("Customer name cant be blank.");
+            continue;
+        }
         //validate state
-        while (validState) {
-
+        while (true) {
             //ask state
             state = io.readString("Please enter State: e.g - TX , NY, CA  ").toUpperCase();
+            if (state.isEmpty()) {
+                io.print("State cant be blank.");
+                continue;
+            }
             if (!(allStates.contains(state))) {
                 io.print("We are currently not taking orders in " + state + ".");
                 continue;
             }
-            validState = false;
+            break;
         }
-
         //ask for Product
         Product productType = getProductType(allProducts);
         // ask area
-        //   BigDecimal area = io.readBigDecimal("Please enter an Area:  e.g 200");
-        BigDecimal area = new BigDecimal("100.00");
-
+        BigDecimal area = new BigDecimal("0.00");
+        while (true) {
+            area = io.readBigDecimal("Please enter an Area:  e.g 200");
+            if (area.compareTo(new BigDecimal("100.00")) < 0) {
+                io.print("Area must be a minimum of 100.");
+                continue;
+            }
+            break;
+        }
         return new Order(Util.capitalizeFirstWord(customerName), productType.getProductType(), area, state);
     }
 
@@ -438,19 +456,12 @@ public class FlooringMasteryView {
     }
 
     public void displayDots() {
-        String dot = ".";
 
-        for (int i = 0; i < 5; i++) {
-            io.print(dot);
-
-            if (i == 5) {
-                dot += "\n";
-
-            }
-
-            dot += "..";
-
-        }
+        io.print(".\n" + "..\n"
+                + ".....\n"
+                + "........\n"
+                + "...........\n"
+                + "..............");
     }
 
     public Integer getOrderNumber() {
@@ -576,7 +587,24 @@ public class FlooringMasteryView {
     public void displayEditOrderBanner() {
         io.print("*******************************************");
         io.print("*******************************************");
-        io.print("************** Edit An order ***************");
+        io.print("************** Edit An order **************");
+        io.print("*******************************************");
+        displaySpace();
+
+    }
+
+    public void displayRemoveOrderBanner() {
+        io.print("*******************************************");
+        io.print("*******************************************");
+        io.print("************* Remove An order *************");
+        io.print("*******************************************");
+        displaySpace();
+
+    }
+
+    public void displayRemoveSuccess() {
+        io.print("*******************************************");
+        io.print("******* Order was removed Successful ******");
         io.print("*******************************************");
         displaySpace();
 

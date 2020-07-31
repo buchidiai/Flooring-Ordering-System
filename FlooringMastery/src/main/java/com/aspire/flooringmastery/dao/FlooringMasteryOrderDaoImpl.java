@@ -46,7 +46,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     @Override
     public Order addOrder(Order OrderDetail) throws FlooringMasteryPersistenceException {
 
-        // loadOrders(Util.getTodaysDate());
+        loadOrders(Util.getTodaysDate());
         Order orderAdded = new Order((MAX_ORDER_NUMBER), OrderDetail);
         orders.add(orderAdded);
         writeOrder();
@@ -55,6 +55,8 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     @Override
     public Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
+
+        loadOrders(orderDate);
 
         Order originalOrder = getOrder(orderDate, orderNumber);
 
@@ -70,16 +72,29 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
             originalOrder.setLaborCost(order.getLaborCost());
             originalOrder.setTax(order.getTax());
             originalOrder.setTotal(order.getTotal());
+            writeOrder(orderDate);
         }
-
-        writeOrder();
 
         return originalOrder;
     }
 
     @Override
-    public boolean removeOrder(Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean removeOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
+
+        loadOrders(orderDate);
+        boolean removedOrder = false;
+
+        Order originalOrder = getOrder(orderDate, orderNumber);
+        if (originalOrder != null) {
+            if (orders.remove(order)) {
+                removedOrder = true;
+                writeOrder(orderDate);
+
+            }
+
+        }
+
+        return removedOrder;
     }
 
     @Override
@@ -89,7 +104,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     @Override
     public Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException {
-//        loadOrders(orderDate);
+        loadOrders(orderDate);
 
         Order orderFound = null;
 
@@ -107,6 +122,27 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         loadOrders(orderDate);
 
         return orders;
+    }
+
+    private void writeOrder(String date) throws FlooringMasteryPersistenceException {
+        System.out.println("ok write order to file from memory");
+        // date + .txt extension
+        String orderDate = Util.cleanDate(date) + ".txt";
+
+        //file object
+        File dir = new File(ORDER_FOLDER);
+
+        //check if directory exists
+        if (isExistingDir(dir)) {
+            //orders_file exists so add to it
+            writeOrderObject(orderDate);
+        } else {
+            //directory doesnt exist ~> create and add to file it
+            if (createDir(dir)) {
+                writeOrderObject(orderDate);
+            }
+
+        }
     }
 
     private void writeOrder() throws FlooringMasteryPersistenceException {
@@ -137,7 +173,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
         Scanner scanner = null;
         try {
-            out = new PrintWriter(new FileWriter(fileLocation, true));
+            out = new PrintWriter(new FileWriter(fileLocation));
 
             scanner = new Scanner(
                     new BufferedReader(
@@ -170,15 +206,14 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
             out.println(orderAsText);
             out.flush();
 
-//            if (orderAsText != null) {
-//
-//            }
+            // Clean up
+            out.close();
+
         }
 
-        // Clean up
-        out.close();
 
-    }
+
+
 
     private String marshallOrder(Order aOrder) {
         // We need to turn a Order object into a line of text for our file.
@@ -188,18 +223,10 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         // It's not a complicated process. Just get out each property,
         // and concatenate with our DELIMITER as a kind of spacer.
         // Start with the order id, since that's supposed to be first.
-//
-//        if (aOrder.getOrderNumber() == MAX_ORDER_NUMBER) {
-//
-//            return null;
-//
-//        }
 
         if (aOrder.getOrderNumber() > MAX_ORDER_NUMBER) {
 
             MAX_ORDER_NUMBER = aOrder.getOrderNumber() + 1;
-
-            System.out.println(" new max num " + MAX_ORDER_NUMBER);
 
         }
 
@@ -246,6 +273,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     private void loadOrders(String orderDate) throws FlooringMasteryPersistenceException {
         System.out.println("ok Load-orders into memory from file ");
         Scanner scanner = null;
+        boolean foundOrdersForDate = false;
         //order date + .txt extension
 
         String orderDateFileExt = Util.cleanDate(orderDate) + ".txt";
@@ -272,6 +300,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                         scanner = new Scanner(
                                 new BufferedReader(
                                         new FileReader(f)));
+                        foundOrdersForDate = true;
                     } catch (FileNotFoundException e) {
 
                         throw new FlooringMasteryPersistenceException(
@@ -281,42 +310,44 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                     //break out loop to get file
                     break;
                 }
-
             }
+            if (foundOrdersForDate == false) {
+                //clear orders out if not found for that day
+                orders.removeAll(orders);
+            } else {
+                //if file is not null
+                if (scanner != null) {
+                    // currentLine holds the most recent line read from the file
+                    String currentLine;
+                    // currentOrder holds the most recent order unmarshalled
+                    Order currentOrder = null;
+                    // Go through ORDER_FILE line by line, decoding each line into a
+                    // Order object by calling the unmarshallOrder method.
+                    // Process while we have more lines in the file
 
-            //if file is not null
-            if (scanner != null) {
+                    //skip first line
+                    if (file.length() != 0) {
+                        scanner.nextLine();
+                    }
 
-                // currentLine holds the most recent line read from the file
-                String currentLine;
-                // currentOrder holds the most recent order unmarshalled
-                Order currentOrder = null;
-                // Go through ORDER_FILE line by line, decoding each line into a
-                // Order object by calling the unmarshallOrder method.
-                // Process while we have more lines in the file
+                    while (scanner.hasNextLine()) {
 
-//                //skip first line
-                if (file.length() != 0) {
-                    scanner.nextLine();
-                }
+                        // get the next line in the file
+                        currentLine = scanner.nextLine();
 
-                while (scanner.hasNextLine()) {
-
-                    // get the next line in the file
-                    currentLine = scanner.nextLine();
-
-                    // unmarshall the line into a Order
-                    currentOrder = unmarshallOrder(currentLine);
+                        // unmarshall the line into a Order
+                        currentOrder = unmarshallOrder(currentLine);
 
 //                    System.out.println("currentOrder " + currentOrder);
-                    //Put currentOrder into the map using order id as the key
-                    if (currentOrder != null && !(orders.contains(currentOrder))) {
+                        //Put currentOrder into the map using order id as the key
+                        if (currentOrder != null && !(orders.contains(currentOrder))) {
 
-                        orders.add(currentOrder);
+                            orders.add(currentOrder);
 
+                        }
                     }
-                }
 
+                }
                 // close scanner
                 scanner.close();
             }

@@ -168,7 +168,7 @@ public class UserIOConsoleImpl implements UserIO {
 
             } catch (Exception e) {
 
-                this.print("Input not valid 2");
+                this.print("Input not valid");
                 continue;
             }
 
@@ -262,6 +262,7 @@ public class UserIOConsoleImpl implements UserIO {
                     //restricts dates that are the same as current day
                     if (orderDate.isBefore(today) || orderDate.isEqual(today)) {
                         this.print("Orders can't be on or before present day, Please try " + Util.formatDate(today, 1) + " or a later date.");
+                        this.print("");
                         continue;
                     }
 
