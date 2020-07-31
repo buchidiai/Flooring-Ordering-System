@@ -41,7 +41,9 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     @Override
     public Order addOrder(Order orderDetail) throws FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
 
-        return orderDao.addOrder(orderDetail);
+        Order orderToAdd = orderDao.addOrder(orderDetail);
+        auditDao.writeAuditEntry(orderToAdd, "Add Order");
+        return orderToAdd;
 
     }
 
@@ -104,13 +106,21 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
         //validate area
         validateArea(order.getArea());
 
-        return orderDao.editOrder(order, orderNumber, orderDate);
+        Order OrderToEdit = orderDao.editOrder(order, orderNumber, orderDate);
+
+        auditDao.writeAuditEntry(order, "Edit Order");
+
+        return OrderToEdit;
 
     }
 
     @Override
     public boolean removeOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
-        return orderDao.removeOrder(order, orderNumber, orderDate);
+
+        boolean orderToRemove = orderDao.removeOrder(order, orderNumber, orderDate);
+        auditDao.writeAuditEntry(order, "Remove Order");
+
+        return orderToRemove;
     }
 
     @Override
@@ -120,6 +130,7 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
 
     @Override
     public Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException {
+
         return orderDao.getOrder(orderDate, orderNumber);
     }
 

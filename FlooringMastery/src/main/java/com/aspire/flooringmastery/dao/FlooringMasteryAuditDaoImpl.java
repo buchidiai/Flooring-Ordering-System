@@ -6,6 +6,10 @@
 package com.aspire.flooringmastery.dao;
 
 import com.aspire.flooringmastery.model.Order;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -16,8 +20,21 @@ public class FlooringMasteryAuditDaoImpl implements FlooringMasteryAuditDao {
     public static final String AUDIT_FILE = "auditactivity.txt";
 
     @Override
-    public void writeAuditEntry(Order order) throws FlooringMasteryPersistenceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void writeAuditEntry(Order order, String action) throws FlooringMasteryPersistenceException {
+        PrintWriter out;
+
+        try {
+
+            out = new PrintWriter(new FileWriter(AUDIT_FILE, true));
+        } catch (IOException e) {
+            throw new FlooringMasteryPersistenceException("Could not persist audit information.", e);
+        }
+
+        LocalDateTime ld = LocalDateTime.now();
+
+        String time = ld.getDayOfWeek() + "-" + ld.getMonth() + " " + ld.getDayOfMonth() + "," + ld.getYear();
+        out.println(action + "::" + order.getOrderNumber() + "::" + time + "::" + order.getCustomerName() + "::" + order.getProductType() + "::" + order.getTotal());
+        out.flush();
     }
 
 }

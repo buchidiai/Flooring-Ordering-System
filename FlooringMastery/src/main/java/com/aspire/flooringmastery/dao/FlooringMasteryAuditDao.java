@@ -13,5 +13,6 @@ import com.aspire.flooringmastery.model.Order;
  */
 public interface FlooringMasteryAuditDao {
 
-    public void writeAuditEntry(Order order) throws FlooringMasteryPersistenceException;
+    public void writeAuditEntry(Order order, String action) throws FlooringMasteryPersistenceException;
+
 }
