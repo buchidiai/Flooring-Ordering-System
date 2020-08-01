@@ -204,12 +204,19 @@ public class UserIOConsoleImpl implements UserIO {
                     continue;
                 } else {
 
+                    //1-12
                     month = Integer.parseInt(results[0]);
+                    //1-31
                     day = Integer.parseInt(results[1]);
                     year = Integer.parseInt(results[2]);
 
+                    String DigitMonth = String.format("%02d", month);
+                    String DigitDay = String.format("%02d", day);
+
                     //validate date
                     LocalDate orderDate = LocalDate.of(year, month, day);
+
+                    response = DigitMonth + "/" + DigitDay + "/" + year;
 
                     //today.
                     isValid = false;
@@ -220,6 +227,7 @@ public class UserIOConsoleImpl implements UserIO {
                 continue;
             }
         }
+        System.out.println("response date return " + response);
         return response;
     }
 

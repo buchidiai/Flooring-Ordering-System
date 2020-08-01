@@ -194,6 +194,8 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                 }
             }
 
+            System.out.println("scanner " + scanner == null);
+
             //if file is not null
             if (scanner != null) {
                 // currentLine holds the most recent line read from the file
@@ -203,6 +205,8 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                 if (file.length() != 0) {
                     scanner.nextLine();
                 }
+
+                System.out.println("scanner.hasNextLine() " + scanner.hasNextLine());
 
                 while (scanner.hasNextLine()) {
 
@@ -240,10 +244,10 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                         }
                     }
                 }
-
+                // close scanner
+                scanner.close();
             }
-            // close scanner
-            scanner.close();
+
         }
         return finalMax;
     }
@@ -500,6 +504,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         //order date + .txt extension
 
         String orderDateFileExt = Util.cleanDate(orderDate) + ".txt";
+        System.out.println("orderDateFileExt " + orderDateFileExt);
 
         //file object
         File dir = new File(ORDER_FOLDER);
