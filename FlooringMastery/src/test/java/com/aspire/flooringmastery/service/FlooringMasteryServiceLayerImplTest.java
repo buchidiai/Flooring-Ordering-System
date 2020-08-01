@@ -46,6 +46,7 @@ public class FlooringMasteryServiceLayerImplTest {
         FlooringMasteryProductDao myProductDao = new FlooringMasteryProductDaoStubImpl();
         //Declare a FlooringMasteryTaxDao variable and initialize it with a FlooringMasteryTaxDaoStubImpl reference.
         FlooringMasteryTaxDao myTaxDao = new FlooringMasteryTaxDaoStubImpl();
+
         service = new FlooringMasteryServiceLayerImpl(myOrderDao, myProductDao, myTaxDao, myAudit);
     }
 

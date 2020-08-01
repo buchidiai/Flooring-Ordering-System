@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -275,10 +276,12 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     }
 
     private boolean exportAllOrders() throws FlooringMasteryPersistenceException {
-        // System.out.println("ok exporting all data");
+        //init scanner
         Scanner scanner = null;
-        boolean addedHeader = false;
-        PrintWriter out;
+        //init list of orders
+        List<String> orderAsList = new ArrayList<>();
+        //init printout
+        PrintWriter out = null;
 
         //file object
         File ordersDirectory = new File(ORDER_FOLDER);
@@ -296,6 +299,8 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
                 //get file date and ext
                 String fileDate = f.getName().split("_")[1].split("\\.")[0];
+                //format file date
+                fileDate = fileDate.substring(0, 2) + "-" + fileDate.substring(2, 4) + "-" + fileDate.substring(4, fileDate.length());
 
                 try {
                     //write to backup
@@ -310,47 +315,42 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                     throw new FlooringMasteryPersistenceException(
                             "-_- Could not load order data into memory.", e);
                 }
-
-                if (backupFile.length() == 0) {
-                    out.println(HEADER + ",OrderDate");
-                }
-
-                //if file is not null
+                //if scanner not null
                 if (scanner != null) {
-
+                    //init ordersas text
                     String orderAsText = "";
-
+                    //check if file has next line
                     while (scanner.hasNextLine()) {
-
                         // get the next line in the file
                         orderAsText = scanner.nextLine();
-
-                        System.out.println("orderAsText " + orderAsText);
-
-                        if ((orderAsText.startsWith("OrderNumber"))) {
-
-                            if (!addedHeader) {
-                                orderAsText += ",OrderDate";
-                                out.println(orderAsText);
-                                out.flush();
+                        //if line doesnt start with orderNumber
+                        if (!(orderAsText.startsWith("OrderNumber"))) {
+                            //if the line lenth is greater than 1
+                            if (orderAsText.length() > 1) {
+                                //append  & add to arraylist
+                                orderAsText += "," + fileDate;
+                                orderAsList.add(orderAsText);
                             }
-                            addedHeader = true;
-                        } else {
-                            orderAsText += "," + fileDate;
-                            out.println(orderAsText);
-                            out.flush();
                         }
                     }
 
                 }
-
             }
             // close scanner
             scanner.close();
+            //write header
+            out.println(HEADER + ",OrderDate");
+            //sort list
+            Collections.sort(orderAsList);
+            // loop through list & write to file
+            for (String s : orderAsList) {
+                out.println(s);
+
+            }
+            out.flush();
 
         } else {
             //directory doesnt exist ~> create and add to file it
-
             System.out.println("dir doesnt exist");
 
         }
