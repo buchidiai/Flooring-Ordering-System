@@ -11,15 +11,19 @@ import com.aspire.flooringmastery.util.Util;
 import static java.lang.Integer.parseInt;
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author louie
  */
+@Component
 public class FlooringMasteryView {
 
     UserIO io;
 
+    @Autowired
     public FlooringMasteryView(UserIO io) {
         this.io = io;
     }

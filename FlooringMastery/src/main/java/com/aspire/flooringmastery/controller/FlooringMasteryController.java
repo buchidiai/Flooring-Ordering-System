@@ -15,16 +15,20 @@ import com.aspire.flooringmastery.service.FlooringMasteryServiceLayer;
 import com.aspire.flooringmastery.service.FlooringmasteryInvalidAreaException;
 import com.aspire.flooringmastery.ui.FlooringMasteryView;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author louie
  */
+@Component
 public class FlooringMasteryController {
 
     private FlooringMasteryView view;
     private FlooringMasteryServiceLayer service;
 
+    @Autowired
     public FlooringMasteryController(FlooringMasteryView view, FlooringMasteryServiceLayer service) {
         this.view = view;
         this.service = service;

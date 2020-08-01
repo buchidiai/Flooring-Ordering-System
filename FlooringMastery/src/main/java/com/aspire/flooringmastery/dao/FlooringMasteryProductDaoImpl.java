@@ -13,11 +13,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author louie
  */
+@Component
 public class FlooringMasteryProductDaoImpl implements FlooringMasteryProductDao {
 
     private final String PRODUCT_FILE;
@@ -27,6 +30,7 @@ public class FlooringMasteryProductDaoImpl implements FlooringMasteryProductDao 
 
     private List<Product> products = new ArrayList<>();
 
+    @Autowired
     public FlooringMasteryProductDaoImpl() {
         this.PRODUCT_FILE = "Products.txt";
     }

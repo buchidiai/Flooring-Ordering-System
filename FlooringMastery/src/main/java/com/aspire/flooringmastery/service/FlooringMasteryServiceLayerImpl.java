@@ -17,11 +17,14 @@ import com.aspire.flooringmastery.util.Util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author louie
  */
+@Component
 public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLayer {
 
     private final FlooringMasteryOrderDao orderDao;
@@ -30,6 +33,7 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
 
     private final FlooringMasteryAuditDao auditDao;
 
+    @Autowired
     public FlooringMasteryServiceLayerImpl(FlooringMasteryOrderDao orderDao, FlooringMasteryProductDao productDao,
             FlooringMasteryTaxDao taxDao,
             FlooringMasteryAuditDao auditDao) {
@@ -47,15 +51,11 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
         //validate customer name
         validateCustomerName(order.getCustomerName());
 
-        //  System.out.println("order.getCustomerName() " + order.getCustomerName());
         //validate state
         validateState(order.getState());
 
-        //   System.out.println("order.getState() " + order.getState());
         //validate area
         validateArea(order.getArea());
-
-        //  System.out.println("order.getArea() " + order.getArea());
         //validate product
         validateProductType(order.getProductType());
 

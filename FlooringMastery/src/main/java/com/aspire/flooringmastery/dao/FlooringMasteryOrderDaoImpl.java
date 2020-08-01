@@ -20,11 +20,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author louie
  */
+@Component
 public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     private final String ORDER_FOLDER;
@@ -38,6 +41,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     private List<Order> orders = new ArrayList<>();
 
+    @Autowired
     public FlooringMasteryOrderDaoImpl() {
         this.ORDER_FOLDER = "Orders/";
         this.ORDER_FILE_NAME = "Orders_";

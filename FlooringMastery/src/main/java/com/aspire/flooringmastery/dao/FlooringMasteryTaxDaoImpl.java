@@ -13,11 +13,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author louie
  */
+@Component
 public class FlooringMasteryTaxDaoImpl implements FlooringMasteryTaxDao {
 
     private final String TAX_FILE;
@@ -27,6 +30,7 @@ public class FlooringMasteryTaxDaoImpl implements FlooringMasteryTaxDao {
 
     private List<Tax> taxes = new ArrayList<>();
 
+    @Autowired
     public FlooringMasteryTaxDaoImpl() {
         this.TAX_FILE = "Taxes.txt";
     }
