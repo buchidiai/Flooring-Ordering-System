@@ -631,7 +631,6 @@ public class FlooringMasteryView {
         io.print("*******************************************");
 
     }
-// io.print("**************** Order #" + orderNumber + " ****************");
 
     public void displayEditOrderBanner() {
         io.print("*******************************************");

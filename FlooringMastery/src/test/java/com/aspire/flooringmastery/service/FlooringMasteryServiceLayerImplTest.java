@@ -234,7 +234,33 @@ public class FlooringMasteryServiceLayerImplTest {
         newOrder.setTotal(new BigDecimal("10000.00"));
         try {
             service.addOrder(newOrder);
-            fail("Expected blank cutomer name exception.");
+            fail("Expected cutomer name exception.");
+        } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException | FlooringmasteryInvalidAreaException e) {
+            fail("Incorrect exception was thrown.");
+        } catch (FlooringMasteryCustomerNameException e) {
+            return;
+        }
+
+    }
+
+    @Test
+    public void testAllowedCustomerName() {
+        // ARRANGE
+        Order newOrder = new Order(3);
+        newOrder.setCustomerName("Mike, Inc. !@#$%^&*(");//~>
+        newOrder.setProductType("Tile");
+        newOrder.setArea(new BigDecimal("100.00"));
+        newOrder.setState("TX");
+        newOrder.setTaxRate(new BigDecimal("4.70"));
+        newOrder.setCostPerSquareFoot(new BigDecimal("3.50"));
+        newOrder.setLaborCostPerSquareFoot(new BigDecimal("4.15"));
+        newOrder.setMaterialCost(new BigDecimal("300.00"));
+        newOrder.setLaborCost(new BigDecimal("10.00"));
+        newOrder.setTax(new BigDecimal("150.00"));
+        newOrder.setTotal(new BigDecimal("10000.00"));
+        try {
+            service.addOrder(newOrder);
+            fail("Expected cutomer name exception.");
         } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException | FlooringmasteryInvalidAreaException e) {
             fail("Incorrect exception was thrown.");
         } catch (FlooringMasteryCustomerNameException e) {
