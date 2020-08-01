@@ -498,13 +498,14 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
     // load order from text file
     private void loadOrders(String orderDate) throws FlooringMasteryPersistenceException {
-//        System.out.println("ok Load-orders into memory from file ");
         Scanner scanner = null;
         boolean foundOrdersForDate = false;
         //order date + .txt extension
 
         String orderDateFileExt = Util.cleanDate(orderDate) + ".txt";
-        System.out.println("orderDateFileExt " + orderDateFileExt);
+
+        //clear memory so when writeOrders() is called dont write existing data in memory from another day
+        orders.removeAll(orders);
 
         //file object
         File dir = new File(ORDER_FOLDER);
@@ -565,8 +566,6 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
                         // unmarshall the line into a Order
                         currentOrder = unmarshallOrder(currentLine);
-
-//                    System.out.println("currentOrder " + currentOrder);
                         //Put currentOrder into the map using order id as the key
                         if (currentOrder != null && !(orders.contains(currentOrder))) {
 
