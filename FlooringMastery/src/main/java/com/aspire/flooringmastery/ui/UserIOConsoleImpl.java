@@ -262,6 +262,9 @@ public class UserIOConsoleImpl implements UserIO {
                     day = Integer.parseInt(results[1]);
                     year = Integer.parseInt(results[2]);
 
+                    String DigitMonth = String.format("%02d", month);
+                    String DigitDay = String.format("%02d", day);
+
                     LocalDate today = LocalDate.now();
 
                     //validate date
@@ -273,6 +276,8 @@ public class UserIOConsoleImpl implements UserIO {
                         this.print("");
                         continue;
                     }
+
+                    response = DigitMonth + "/" + DigitDay + "/" + year;
 
                     //today.
                     isValid = false;

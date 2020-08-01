@@ -568,12 +568,9 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                         currentOrder = unmarshallOrder(currentLine);
                         //Put currentOrder into the map using order id as the key
                         if (currentOrder != null && !(orders.contains(currentOrder))) {
-
                             orders.add(currentOrder);
-
                         }
                     }
-
                 }
                 // close scanner
                 scanner.close();

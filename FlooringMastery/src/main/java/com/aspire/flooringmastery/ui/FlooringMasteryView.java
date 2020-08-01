@@ -157,15 +157,15 @@ public class FlooringMasteryView {
         //
         //ask user for new info
         //
-        String customerName = io.readString("Please enter new Customer name: (" + order.getCustomerName() + ") ");
+        String customerName = getValidCustomerName(order.getCustomerName());
 
         //validate new state
-        String state = getValidateState(order.getState(), allStates);
+        String state = getValidState(order.getState(), allStates);
         //ask for Product and validate
         //will return null if user hits enter key else will return product type
-        Product productType = getValidateProductType(allProducts, order.getProductType());
+        Product productType = getValidProductType(allProducts, order.getProductType());
         //validate area
-        BigDecimal area = getValidateArea(order.getArea());
+        BigDecimal area = getValidArea(order.getArea());
 
         // ask area
         if (customerName.isEmpty() && state.isEmpty() && (productType == null) && (area == null)) {
@@ -187,7 +187,25 @@ public class FlooringMasteryView {
 
     }
 
-    private BigDecimal getValidateArea(BigDecimal orderArea) {
+    private String getValidCustomerName(String orderCustomerName) {
+        String customerName = "";
+        while (true) {
+
+            customerName = io.readString("Please enter new Customer name: (" + orderCustomerName + ") ");
+
+            if (customerName.isEmpty()) {
+                break;
+            } else if (!(customerName.matches("[A-Za-z0-9,. ]+"))) {
+                io.print("Customer name can only have Alphanumeric value including comma and period.");
+                continue;
+            }
+
+            break;
+        }
+        return customerName;
+    }
+
+    private BigDecimal getValidArea(BigDecimal orderArea) {
         boolean validArea = true;
         BigDecimal area = new BigDecimal("0");
         String areaString = "";
@@ -217,7 +235,7 @@ public class FlooringMasteryView {
         return area;
     }
 
-    private String getValidateState(String orderState, List<String> allStates) {
+    private String getValidState(String orderState, List<String> allStates) {
         boolean validState = true;
         String state = "";
 
@@ -238,7 +256,7 @@ public class FlooringMasteryView {
         return state;
     }
 
-    public Product getValidateProductType(List<Product> allProducts, String previousProduct) {
+    public Product getValidProductType(List<Product> allProducts, String previousProduct) {
 
         displayProducts(allProducts);
 
@@ -376,7 +394,19 @@ public class FlooringMasteryView {
         String state = "";
 
         //ask first name
-        String customerName = io.readString("Please enter Customer name: e.g - Walmart, Inc");
+        String customerName = "";
+        while (true) {
+
+            customerName = io.readString("Please enter Customer name: e.g - Walmart, Inc");
+
+            if (!(customerName.matches("[A-Za-z0-9,. ]+"))) {
+
+                io.print("Customer name can only have Alphanumeric value including comma and period.");
+                continue;
+
+            }
+            break;
+        }
 
         while (customerName.isEmpty()) {
             io.print("Customer name cant be blank.");
@@ -584,16 +614,24 @@ public class FlooringMasteryView {
 
     }
 
-    public void displayAddOrderSucess() {
+    public void displayAddOrderSucess(Integer orderNumber, String orderDueDate) {
         displayDots();
         io.print("*******************************************");
         io.print("*******************************************");
         io.print("********* Add Order Was Successful ********");
-        io.print("*******************************************");
+        displayEditOrderBanner(orderNumber, orderDueDate);
         displaySpace();
         displayGoToMainMenu();
 
     }
+
+    public void displayEditOrderBanner(Integer orderNumber, String orderDueDate) {
+        io.print("******** Service Date: " + orderDueDate + " *********");
+        io.print("                 Order #" + orderNumber + "                 ");
+        io.print("*******************************************");
+
+    }
+// io.print("**************** Order #" + orderNumber + " ****************");
 
     public void displayEditOrderBanner() {
         io.print("*******************************************");
@@ -604,12 +642,12 @@ public class FlooringMasteryView {
 
     }
 
-    public void displayEditOrderSucess() {
+    public void displayEditOrderSucess(Integer orderNumber, String orderDueDate) {
         displayDots();
         io.print("*******************************************");
         io.print("*******************************************");
         io.print("********* Edit Order Was Successful *******");
-        io.print("*******************************************");
+        displayEditOrderBanner(orderNumber, orderDueDate);
         displaySpace();
 
     }

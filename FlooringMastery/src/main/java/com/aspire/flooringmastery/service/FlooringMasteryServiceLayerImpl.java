@@ -203,24 +203,12 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     private void validateCustomerName(String customerName) throws FlooringMasteryCustomerNameException {
-
-//        Pattern p = Pattern.compile("/^[a-zA-Z0-9,.!? ]*$/", Pattern.CASE_INSENSITIVE);
-//
-//        Matcher m = p.matcher(customerName);
-//
-//        boolean b = m.find();
         if (customerName.isEmpty()) {
-
             throw new FlooringMasteryCustomerNameException("Customer name can't be empty.");
-
         }
-//
-//        if (b) {
-//
-//            throw new FlooringMasteryCustomerNameException("Customer name contains can only contain [0-9][a-z][.][,]");
-//
-//        }
-
+        if (!(customerName.matches("[A-Za-z0-9,. ]+"))) {
+            throw new FlooringMasteryCustomerNameException("Customer name can only have Alphanumeric value including comma and period.");
+        }
     }
 
 }

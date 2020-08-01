@@ -67,10 +67,6 @@ public class FlooringMasteryController {
 
             } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryCustomerNameException | FlooringmasteryInvalidAreaException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException e) {
 
-                System.out.println("e " + e.getLocalizedMessage());
-
-                System.out.println("e " + e.getClass());
-
                 showErrorMsg(e.getMessage());
             }
 
@@ -129,9 +125,9 @@ public class FlooringMasteryController {
             //if yes
             if (orderToPlace) {
                 //add order
-                service.addOrder(orderDetails);
+                Order order = service.addOrder(orderDetails);
 
-                view.displayAddOrderSucess();
+                view.displayAddOrderSucess(order.getOrderNumber(), orderDate);
 
             } else {
                 //if no
@@ -185,9 +181,9 @@ public class FlooringMasteryController {
                     boolean orderToUpdate = view.displayOrderDetails(updatedOrder, orderDate, false);
                     //if yes then update order
                     if (orderToUpdate) {
-                        service.editOrder(updatedOrder, orderNumber, orderDate);
+                        Order order = service.editOrder(updatedOrder, orderNumber, orderDate);
 
-                        view.displayEditOrderSucess();
+                        view.displayEditOrderSucess(order.getOrderNumber(), orderDate);
 
                     } else {
                         //if no then go to main menu
@@ -240,14 +236,17 @@ public class FlooringMasteryController {
     }
 
     private void exportAllData() throws FlooringMasteryPersistenceException {
+        //export data to file
         boolean exported = service.exportOrder();
 
+        //if successful display sucess
         if (exported) {
             view.displayExportSuccess();
         } else {
+            // display fail
             view.displayExportFail();
         }
-
+        //go o menu
         view.displayGoToMainMenu();
 
     }
