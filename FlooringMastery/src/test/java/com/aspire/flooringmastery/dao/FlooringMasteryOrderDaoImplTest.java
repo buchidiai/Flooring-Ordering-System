@@ -39,7 +39,7 @@ public class FlooringMasteryOrderDaoImplTest {
         String testOrderFile = "Order_";
         String backupFolder = "TestBackup/";
         String backupFile = "DataExport.txt";
-        String fullPath = "TestOrders/Order_07312020.txt";
+        String fullPath = "TestOrders/Order_" + currentDate + ".txt";
 
         // Use the FileWriter to quickly blank the file
         //new FileWriter(fullPath);

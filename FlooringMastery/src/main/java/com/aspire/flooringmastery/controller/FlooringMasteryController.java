@@ -9,6 +9,7 @@ import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
 import com.aspire.flooringmastery.model.Order;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.service.FlooringMasteryCustomerNameException;
+import com.aspire.flooringmastery.service.FlooringMasteryInvalidProductTypeException;
 import com.aspire.flooringmastery.service.FlooringMasteryInvalidStateException;
 import com.aspire.flooringmastery.service.FlooringMasteryServiceLayer;
 import com.aspire.flooringmastery.service.FlooringmasteryInvalidAreaException;
@@ -64,7 +65,7 @@ public class FlooringMasteryController {
                         unknownCommand();
                 }
 
-            } catch (FlooringMasteryCustomerNameException | FlooringmasteryInvalidAreaException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException e) {
+            } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryCustomerNameException | FlooringmasteryInvalidAreaException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException e) {
 
                 System.out.println("e " + e.getLocalizedMessage());
 
@@ -103,7 +104,7 @@ public class FlooringMasteryController {
 
     }
 
-    private void addOrder() throws FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException {
+    private void addOrder() throws FlooringMasteryInvalidProductTypeException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException {
         view.displayAddOrderBanner();
 
         //get all products available
@@ -142,7 +143,7 @@ public class FlooringMasteryController {
 
     }
 
-    private void editOrder() throws FlooringMasteryPersistenceException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException {
+    private void editOrder() throws FlooringMasteryInvalidProductTypeException, FlooringMasteryPersistenceException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException {
 
         view.displayEditOrderBanner();
 

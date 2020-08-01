@@ -33,8 +33,6 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
         this.onlyOrder.setTax(new BigDecimal("150.00"));
         this.onlyOrder.setTotal(new BigDecimal("10000.00"));
 
-        System.out.println("FlooringMasteryOrderDaoStubImpl  instiated");
-
     }
 
     public FlooringMasteryOrderDaoStubImpl(Order onlyOrder) {
@@ -43,11 +41,9 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
 
     @Override
     public Order addOrder(Order order, Integer orderNumber) throws FlooringMasteryPersistenceException {
-        System.out.println("add order in OrderDaoStubImpl " + order.getCustomerName());
-        System.out.println("add order in OrderDaoStubImpl " + order.getOrderNumber());
+
         if (order.getOrderNumber().equals(onlyOrder.getOrderNumber())) {
             return onlyOrder;
-
         } else {
             return null;
         }
@@ -55,8 +51,6 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
 
     @Override
     public Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
-        System.out.println("edit order in OrderDaoStubImpl " + order.getCustomerName());
-        System.out.println("edit order in OrderDaoStubImpl " + order.getOrderNumber());
         if (order.getOrderNumber().equals(onlyOrder.getOrderNumber())) {
             return onlyOrder;
 
@@ -67,9 +61,6 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
 
     @Override
     public boolean removeOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
-        System.out.println("remove order in OrderDaoStubImpl " + order.getCustomerName());
-        System.out.println("remove order in OrderDaoStubImpl " + order.getOrderNumber());
-
         if (order.getOrderNumber().equals(onlyOrder.getOrderNumber())) {
             return true;
 
@@ -86,8 +77,6 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
     @Override
     public Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException {
 
-        System.out.println("get order in OrderDaoStubImpl " + orderNumber);
-        System.out.println("get order in OrderDaoStubImpl " + orderDate);
         if (orderNumber.equals(onlyOrder.getOrderNumber())) {
             return onlyOrder;
 
@@ -98,9 +87,6 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
 
     @Override
     public List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException {
-
-        System.out.println("get all order in OrderDaoStubImpl " + orderDate);
-
         List<Order> orderList = new ArrayList<>();
         orderList.add(onlyOrder);
         return orderList;
@@ -109,7 +95,8 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
 
     @Override
     public Integer getMaxOrderNumber(String date) throws FlooringMasteryPersistenceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        return onlyOrder.getOrderNumber();
     }
 
 }

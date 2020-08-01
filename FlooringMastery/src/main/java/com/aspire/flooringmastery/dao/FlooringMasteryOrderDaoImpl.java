@@ -104,8 +104,6 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         loadOrders(orderDate);
         boolean removedOrder = false;
         for (Order o : orders) {
-            System.out.println(" orders " + o);
-
             if (Objects.equals(o.getOrderNumber(), orderNumber)) {
                 orders.remove(o);
                 removedOrder = true;

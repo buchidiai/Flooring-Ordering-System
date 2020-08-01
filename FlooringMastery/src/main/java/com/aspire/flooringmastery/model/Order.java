@@ -71,6 +71,23 @@ public class Order {
         this.total = total;
     }
 
+    public Order(String customerName, String state, BigDecimal taxRate, String productType, BigDecimal area,
+            BigDecimal costPerSquareFoot, BigDecimal laborCostPerSquareFoot, BigDecimal materialCost, BigDecimal laborCost, BigDecimal tax,
+            BigDecimal total) {
+
+        this.customerName = customerName;
+        this.state = state;
+        this.taxRate = taxRate;
+        this.productType = productType;
+        this.area = area;
+        this.costPerSquareFoot = costPerSquareFoot;
+        this.laborCostPerSquareFoot = laborCostPerSquareFoot;
+        this.materialCost = materialCost;
+        this.laborCost = laborCost;
+        this.tax = tax;
+        this.total = total;
+    }
+
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
@@ -218,6 +235,11 @@ public class Order {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" + "orderNumber=" + orderNumber + ", customerName=" + customerName + ", productType=" + productType + ", area=" + area + ", state=" + state + ", taxRate=" + taxRate + ", costPerSquareFoot=" + costPerSquareFoot + ", laborCostPerSquareFoot=" + laborCostPerSquareFoot + ", materialCost=" + materialCost + ", laborCost=" + laborCost + ", tax=" + tax + ", total=" + total + '}';
     }
 
 }

@@ -50,6 +50,7 @@ public class FlooringMasteryTaxDaoImpl implements FlooringMasteryTaxDao {
         for (Tax t : taxes) {
             if (t.getStateAbbreviation().equals(state)) {
                 tax = t;
+                break;
             }
         }
 
@@ -63,6 +64,7 @@ public class FlooringMasteryTaxDaoImpl implements FlooringMasteryTaxDao {
 
         for (Tax t : taxes) {
             states.add(t.getStateAbbreviation());
+
         }
 
         return states;
