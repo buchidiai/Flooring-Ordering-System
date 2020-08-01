@@ -108,7 +108,7 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
     }
 
     @Override
-    public Integer getMaxorderNumber(String date) throws FlooringMasteryPersistenceException {
+    public Integer getMaxOrderNumber(String date) throws FlooringMasteryPersistenceException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

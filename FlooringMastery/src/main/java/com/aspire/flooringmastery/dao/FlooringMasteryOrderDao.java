@@ -22,7 +22,7 @@ public interface FlooringMasteryOrderDao {
 
     boolean exportOrders() throws FlooringMasteryPersistenceException;
 
-    Integer getMaxorderNumber(String date) throws FlooringMasteryPersistenceException;
+    Integer getMaxOrderNumber(String date) throws FlooringMasteryPersistenceException;
 
     Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException;
 

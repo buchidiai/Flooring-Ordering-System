@@ -151,7 +151,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     }
 
     @Override
-    public Integer getMaxorderNumber(String orderDate) throws FlooringMasteryPersistenceException {
+    public Integer getMaxOrderNumber(String orderDate) throws FlooringMasteryPersistenceException {
 
         Scanner scanner = null;
 

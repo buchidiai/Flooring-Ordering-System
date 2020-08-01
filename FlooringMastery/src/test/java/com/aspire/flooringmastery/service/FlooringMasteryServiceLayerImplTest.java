@@ -40,4 +40,41 @@ public class FlooringMasteryServiceLayerImplTest {
     public void setUp() {
     }
 
+//    @Test
+//    public void testAddOrder() throws Exception {
+//        // ARRANGE
+//
+//
+//        BigDecimal productPrice = new BigDecimal("12.99");
+//        String productName = "Wine";
+//
+//        Product testProductToSell = new Product(productName, productPrice, 2);
+//
+//        BigDecimal moneyInserted = new BigDecimal("15.99");
+//
+//        BigDecimal moneyLeft = moneyInserted.subtract(productPrice);
+//
+//        Change change = new Change(moneyLeft);
+//
+//        // ACT & ASSERT
+//        try {
+//            saleResponse = service.sellProduct(moneyInserted, testProductToSell);
+//
+//        } catch (VendingMachineInsufficentFundsException | VendingMachinePersistenceException | VendingMachineNoItemInventoryException e) {
+//
+//            System.out.println(" Error: " + e.getMessage());
+//        }
+//
+//        assertEquals(moneyInserted, saleResponse.getMoneyEntered(),
+//                "Money entered should be same returned.");
+//
+//        assertTrue(change.equals(saleResponse.getChange()),
+//                "change should be correct.");
+//
+//        assertEquals(moneyLeft, saleResponse.getFullChange(),
+//                "money left should be the same an full change.");
+//
+//        assertEquals(productName, saleResponse.getProductName(),
+//                "product name should be the same.");
+//    }
 }

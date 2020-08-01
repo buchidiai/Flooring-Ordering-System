@@ -6,6 +6,8 @@
 package com.aspire.flooringmastery.dao;
 
 import com.aspire.flooringmastery.model.Tax;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,19 +16,51 @@ import java.util.List;
  */
 public class FlooringMasteryTaxDaoStubImpl implements FlooringMasteryTaxDao {
 
+    public Tax onlyTax;
+
+    public FlooringMasteryTaxDaoStubImpl() {
+        this.onlyTax = new Tax("TX", "Texas", new BigDecimal("4.45"));
+    }
+
+    public FlooringMasteryTaxDaoStubImpl(Tax testTax) {
+        this.onlyTax = testTax;
+    }
+
     @Override
     public List<Tax> getAllTaxes() throws FlooringMasteryPersistenceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Tax> taxList = new ArrayList<>();
+
+        taxList.add(onlyTax);
+
+        return taxList;
     }
 
     @Override
     public List<String> getAllStates() throws FlooringMasteryPersistenceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<String> allStates = new ArrayList<>();
+
+        allStates.add(onlyTax.getStateName());
+
+        return allStates;
+
     }
 
     @Override
     public Tax getTax(String state) throws FlooringMasteryPersistenceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Tax> taxList = new ArrayList<>();
+
+        taxList.add(onlyTax);
+
+        Tax tax = null;
+
+        for (Tax t : taxList) {
+            if (t.getStateAbbreviation().equals(state)) {
+                tax = t;
+                break;
+            }
+        }
+        return tax;
+
     }
 
 }
