@@ -13,9 +13,6 @@ import com.aspire.flooringmastery.dao.FlooringMasteryProductDao;
 import com.aspire.flooringmastery.dao.FlooringMasteryProductDaoImpl;
 import com.aspire.flooringmastery.dao.FlooringMasteryTaxDao;
 import com.aspire.flooringmastery.dao.FlooringMasteryTaxDaoImpl;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -39,20 +36,8 @@ public class FlooringMasteryServiceLayerImplTest {
         service = new FlooringMasteryServiceLayerImpl(myOrderDao, myProductDao, myTaxDao, myAudit);
     }
 
-    @BeforeAll
-    public static void setUpClass() {
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-    }
-
     @BeforeEach
     public void setUp() {
-    }
-
-    @AfterEach
-    public void tearDown() {
     }
 
 }
