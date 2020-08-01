@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  */
 public class FlooringMasteryAuditDaoImpl implements FlooringMasteryAuditDao {
 
-    public static final String AUDIT_FILE = "auditactivity.txt";
+    public static final String AUDIT_FILE = "auditLog.txt";
 
     @Override
     public void writeAuditEntry(Order order, String action) throws FlooringMasteryPersistenceException {

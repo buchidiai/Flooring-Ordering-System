@@ -445,3 +445,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 /FlooringMastery/target/
+/FlooringMastery/nbproject/

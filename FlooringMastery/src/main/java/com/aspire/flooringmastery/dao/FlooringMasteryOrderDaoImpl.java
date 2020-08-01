@@ -52,16 +52,19 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     }
 
     @Override
-    public Order addOrder(Order OrderDetail) throws FlooringMasteryPersistenceException {
+    public Order addOrder(Order OrderDetail, Integer orderNumber) throws FlooringMasteryPersistenceException {
+
         //load orders of the day (not passed in date but actually day this order will be placed) and order will be added
         loadOrders(Util.getTodaysDate());
+
         //create new object with id max id
         //max id is found when orders are loaded from loadOrders()
-        Order orderAdded = new Order((MAX_ORDER_NUMBER), OrderDetail);
+        Order orderAdded = new Order((orderNumber + 1), OrderDetail);
         //add order to list of orders
         orders.add(orderAdded);
         //write orders in memory to file of order_day.txt
         writeOrder();
+
         //return order
         return orderAdded;
     }
@@ -69,44 +72,46 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     @Override
     public Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
 
-        //call getOrder to get the order and edit it
-        Order originalOrder = getOrder(orderDate, orderNumber);
+        loadOrders(orderDate);
 
-        //if order is not null, set values
-        if (originalOrder != null) {
-            originalOrder.setCustomerName(order.getCustomerName());
-            originalOrder.setProductType(order.getProductType());
-            originalOrder.setArea(order.getArea());
-            originalOrder.setState(order.getState());
-            originalOrder.setTaxRate(order.getTaxRate());
-            originalOrder.setCostPerSquareFoot(order.getCostPerSquareFoot());
-            originalOrder.setLaborCostPerSquareFoot(order.getLaborCostPerSquareFoot());
-            originalOrder.setMaterialCost(order.getMaterialCost());
-            originalOrder.setLaborCost(order.getLaborCost());
-            originalOrder.setTax(order.getTax());
-            originalOrder.setTotal(order.getTotal());
-            //write changes to file_date.txt
-            writeOrder(orderDate);
+        Order orderFound = null;
+
+        for (Order o : orders) {
+
+            //find order with matching order number and return it
+            if (Objects.equals(o.getOrderNumber(), orderNumber)) {
+                o.setCustomerName(order.getCustomerName());
+                o.setProductType(order.getProductType());
+                o.setArea(order.getArea());
+                o.setState(order.getState());
+                o.setTaxRate(order.getTaxRate());
+                o.setCostPerSquareFoot(order.getCostPerSquareFoot());
+                o.setLaborCostPerSquareFoot(order.getLaborCostPerSquareFoot());
+                o.setMaterialCost(order.getMaterialCost());
+                o.setLaborCost(order.getLaborCost());
+                o.setTax(order.getTax());
+                o.setTotal(order.getTotal());
+                orderFound = o;
+                writeOrder(orderDate);
+                break;
+            }
         }
-        return originalOrder;
+        return orderFound;
     }
 
     @Override
     public boolean removeOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
-
+        loadOrders(orderDate);
         boolean removedOrder = false;
-        //call getOrder to get the order and remove it
-        Order originalOrder = getOrder(orderDate, orderNumber);
-        //if order is not null
-        if (originalOrder != null) {
-            //remove order from orders list
-            if (orders.remove(order)) {
+        for (Order o : orders) {
+            System.out.println(" orders " + o);
+
+            if (Objects.equals(o.getOrderNumber(), orderNumber)) {
+                orders.remove(o);
                 removedOrder = true;
-                //write changes to file_date.txt
                 writeOrder(orderDate);
-
+                break;
             }
-
         }
         //return removed order
         return removedOrder;
@@ -120,8 +125,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     @Override
     public Order getOrder(String orderDate, Integer orderNumber) throws FlooringMasteryPersistenceException {
         //load orders of the day of the order that will be edited
-        //this is needed for remove order, edit order and get order to load orders of their date
-        //i am using to reduce calls to loadOrders
+
         loadOrders(orderDate);
 
         Order orderFound = null;
@@ -135,6 +139,137 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         }
         //return found order
         return orderFound;
+    }
+
+    @Override
+    public List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException {
+        //load order by date to memory
+
+        loadOrders(orderDate);
+
+        return orders;
+    }
+
+    @Override
+    public Integer getMaxorderNumber(String orderDate) throws FlooringMasteryPersistenceException {
+
+        Scanner scanner = null;
+
+        Integer currentMax = 0;
+
+        Integer finalMax = 0;
+        //order date + .txt extension
+
+        String orderDateFileExt = Util.cleanDate(orderDate) + ".txt";
+
+        //file object
+        File dir = new File(ORDER_FOLDER);
+        File file = new File(ORDER_FOLDER + ORDER_FILE_NAME + orderDateFileExt);
+
+        //check if directory exists
+        if (isExistingDir(dir)) {
+            //it exists lets check if there are any files
+            File[] dir_contents = dir.listFiles();
+
+            //get file in directory
+            for (File f : dir_contents) {
+                //get file date and ext
+                String fileDate = f.getName().split("_")[1];
+
+                //check if file date and order date are the same
+                if (fileDate.equals(orderDateFileExt)) {
+
+                    try {
+                        // Create Scanner for reading the file
+                        scanner = new Scanner(
+                                new BufferedReader(
+                                        new FileReader(f)));
+
+                    } catch (FileNotFoundException e) {
+
+                        throw new FlooringMasteryPersistenceException(
+                                "-_- Could not load order data into memory.", e);
+                    }
+
+                    //break out loop to get file
+                    break;
+                }
+            }
+
+            //if file is not null
+            if (scanner != null) {
+                // currentLine holds the most recent line read from the file
+                String currentLine;
+
+                //skip first line for header is empty
+                if (file.length() != 0) {
+                    scanner.nextLine();
+                }
+
+                while (scanner.hasNextLine()) {
+
+                    // get the next line in the file
+                    currentLine = scanner.nextLine();
+
+                    String[] orderTokens = currentLine.split(DELIMITER);
+
+                    if (orderTokens.length == NUMBER_OF_FIELDS) {
+                        //on load up size is zero so read from file
+                        if (orders.isEmpty()) {
+
+                            //create order object
+                            currentMax = getMaxOrderNumber(orderTokens);
+                            if (currentMax > finalMax) {
+                                finalMax = currentMax;
+                            }
+                        } else {
+                            //size is not zero
+                            //check for duplicates for list
+                            for (Order p : orders) {
+                                //if order number in list  == order number in file
+                                if (p.getOrderNumber() == (Integer.parseInt(orderTokens[0]))) {
+                                    finalMax = p.getOrderNumber();
+                                    if (p.getOrderNumber() > MAX_ORDER_NUMBER) {
+                                        finalMax = MAX_ORDER_NUMBER;
+                                    }
+                                } else {
+                                    currentMax = getMaxOrderNumber(orderTokens);
+                                    if (currentMax > finalMax) {
+                                        finalMax = currentMax + 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            // close scanner
+            scanner.close();
+        }
+        return finalMax;
+    }
+
+    private Integer getMaxOrderNumber(String[] orderTokens) {
+        int count = 0;
+        int max = 0;
+        try {
+            //get order number
+            Integer orderNumber = Integer.parseInt(orderTokens[0]);
+
+            if (orderNumber > max) {
+                max = orderNumber;
+            }
+        } catch (Exception e) {
+            count++;
+            if (count <= 1) {
+                System.out.println("");
+                System.out.println("Unable to load order #" + orderTokens[0] + ", order number was not utilized");
+            }
+        }
+
+        return max;
+
     }
 
     private boolean exportAllOrders() throws FlooringMasteryPersistenceException {
@@ -162,7 +297,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
                 try {
                     //write to backup
-                    out = new PrintWriter(new FileWriter(backupFile, true));
+                    out = new PrintWriter(new FileWriter(backupFile));
                     // Create Scanner for reading the file
                     scanner = new Scanner(
                             new BufferedReader(
@@ -174,6 +309,10 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                             "-_- Could not load order data into memory.", e);
                 }
 
+                if (backupFile.length() == 0) {
+                    out.println(HEADER + ",OrderDate");
+                }
+
                 //if file is not null
                 if (scanner != null) {
 
@@ -183,6 +322,8 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
                         // get the next line in the file
                         orderAsText = scanner.nextLine();
+
+                        System.out.println("orderAsText " + orderAsText);
 
                         if ((orderAsText.startsWith("OrderNumber"))) {
 
@@ -214,19 +355,10 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         return true;
     }
 
-    @Override
-    public List<Order> getAllOrders(String orderDate) throws FlooringMasteryPersistenceException {
-        //load order by date to memory
-        loadOrders(orderDate);
-
-        return orders;
-    }
-
     private void writeOrder(String date) throws FlooringMasteryPersistenceException {
         //   System.out.println("ok write order to file from memory");
         // date + .txt extension
         String orderDate = Util.cleanDate(date) + ".txt";
-
         //file object
         File dir = new File(ORDER_FOLDER);
 
@@ -269,14 +401,14 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         PrintWriter out;
         String fileLocation = ORDER_FOLDER + ORDER_FILE_NAME + orderDay;
 
-        Scanner scanner = null;
+//        Scanner scanner = null;
         try {
 
             out = new PrintWriter(new FileWriter(fileLocation));
 
-            scanner = new Scanner(
-                    new BufferedReader(
-                            new FileReader(fileLocation)));
+//            scanner = new Scanner(
+//                    new BufferedReader(
+//                            new FileReader(fileLocation)));
         } catch (IOException e) {
             throw new FlooringMasteryPersistenceException("Could not write order data.", e);
         }
@@ -509,8 +641,8 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
             //create order object
             Integer orderNumber = Integer.parseInt(orderTokens[0]);
 
-            if (orderNumber >= MAX_ORDER_NUMBER) {
-                MAX_ORDER_NUMBER = orderNumber + 1;
+            if (orderNumber > MAX_ORDER_NUMBER) {
+                MAX_ORDER_NUMBER = orderNumber;
             }
             String customerName = orderTokens[1];
             String state = orderTokens[2];

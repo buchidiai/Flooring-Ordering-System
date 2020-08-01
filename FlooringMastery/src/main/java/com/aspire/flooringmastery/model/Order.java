@@ -6,6 +6,7 @@
 package com.aspire.flooringmastery.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  *
@@ -26,6 +27,10 @@ public class Order {
     private BigDecimal laborCost;
     private BigDecimal tax;
     private BigDecimal total;
+
+    public Order(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
     public Order(String customerName, String productType, BigDecimal area, String state) {
         this.customerName = customerName;
@@ -156,6 +161,63 @@ public class Order {
 
     public BigDecimal getTotal() {
         return total;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Order other = (Order) obj;
+        if (!Objects.equals(this.customerName, other.customerName)) {
+            return false;
+        }
+        if (!Objects.equals(this.productType, other.productType)) {
+            return false;
+        }
+        if (!Objects.equals(this.state, other.state)) {
+            return false;
+        }
+        if (!Objects.equals(this.orderNumber, other.orderNumber)) {
+            return false;
+        }
+        if (!Objects.equals(this.area, other.area)) {
+            return false;
+        }
+        if (!Objects.equals(this.taxRate, other.taxRate)) {
+            return false;
+        }
+        if (!Objects.equals(this.costPerSquareFoot, other.costPerSquareFoot)) {
+            return false;
+        }
+        if (!Objects.equals(this.laborCostPerSquareFoot, other.laborCostPerSquareFoot)) {
+            return false;
+        }
+        if (!Objects.equals(this.materialCost, other.materialCost)) {
+            return false;
+        }
+        if (!Objects.equals(this.laborCost, other.laborCost)) {
+            return false;
+        }
+        if (!Objects.equals(this.tax, other.tax)) {
+            return false;
+        }
+        if (!Objects.equals(this.total, other.total)) {
+            return false;
+        }
+        return true;
     }
 
 }
