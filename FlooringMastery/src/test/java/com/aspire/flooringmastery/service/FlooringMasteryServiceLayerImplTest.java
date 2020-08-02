@@ -5,14 +5,7 @@
  */
 package com.aspire.flooringmastery.service;
 
-import com.aspire.flooringmastery.dao.FlooringMasteryAuditDao;
-import com.aspire.flooringmastery.dao.FlooringMasteryOrderDao;
-import com.aspire.flooringmastery.dao.FlooringMasteryOrderDaoStubImpl;
 import com.aspire.flooringmastery.dao.FlooringMasteryPersistenceException;
-import com.aspire.flooringmastery.dao.FlooringMasteryProductDao;
-import com.aspire.flooringmastery.dao.FlooringMasteryProductDaoStubImpl;
-import com.aspire.flooringmastery.dao.FlooringMasteryTaxDao;
-import com.aspire.flooringmastery.dao.FlooringMasteryTaxDaoStubImpl;
 import com.aspire.flooringmastery.model.Order;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.util.Util;
@@ -25,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
@@ -37,17 +32,10 @@ public class FlooringMasteryServiceLayerImplTest {
     String currentDate = Util.getTodaysDate();
 
     public FlooringMasteryServiceLayerImplTest() {
-
-        // Instantiate the Audit DAO
-        FlooringMasteryAuditDao myAudit = new FlooringMasteryAuditDaoStubImpl();
-        //Declare a FlooringMasteryOrderDao variable and initialize it with a FlooringMasteryOrderDaoStubImpl reference.
-        FlooringMasteryOrderDao myOrderDao = new FlooringMasteryOrderDaoStubImpl();
-        //Declare a FlooringMasteryProductDao variable and initialize it with a FlooringMasteryProductDaoStubImpl reference.
-        FlooringMasteryProductDao myProductDao = new FlooringMasteryProductDaoStubImpl();
-        //Declare a FlooringMasteryTaxDao variable and initialize it with a FlooringMasteryTaxDaoStubImpl reference.
-        FlooringMasteryTaxDao myTaxDao = new FlooringMasteryTaxDaoStubImpl();
-
-        service = new FlooringMasteryServiceLayerImpl(myOrderDao, myProductDao, myTaxDao, myAudit);
+        ApplicationContext ctx
+                = new ClassPathXmlApplicationContext("applicationContext.xml");
+        service
+                = ctx.getBean("myServiceLayer", FlooringMasteryServiceLayer.class);
     }
 
     @BeforeEach
