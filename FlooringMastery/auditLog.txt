@@ -18,3 +18,11 @@ Add Order::101::SATURDAY-AUGUST 1,2020::Uinc::Carpet::908.72
 Add Order::102::SATURDAY-AUGUST 1,2020::Wefcsdf::Carpet::908.72
 Add Order::3::SATURDAY-AUGUST 1,2020::MVC::Tile::5737.50
 Add Order::4::SATURDAY-AUGUST 1,2020::Promise::Carpet::2271.79
+Add Order::1::SUNDAY-AUGUST 2,2020::Mpc::Carpet::908.72
+Remove Order::1::SUNDAY-AUGUST 2,2020::Mpc::Carpet::908.72
+Remove Order::17::SUNDAY-AUGUST 2,2020::Jean Ichbiah::Wood::506124.71
+Add Order::123::SUNDAY-AUGUST 2,2020::Walmart::Distressed Red Oak::13599.49
+Remove Order::123::SUNDAY-AUGUST 2,2020::Walmart::Distressed Red Oak::13599.49
+Add Order::123::SUNDAY-AUGUST 2,2020::Sdfd::Mosaic Tile::14659.75
+Edit Order::null::SUNDAY-AUGUST 2,2020::Sdfd::Mosaic Tile::7329.88
+Remove Order::123::SUNDAY-AUGUST 2,2020::Sdfd::Mosaic Tile::7329.88

@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -199,8 +200,6 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                 }
             }
 
-            System.out.println("scanner " + scanner == null);
-
             //if file is not null
             if (scanner != null) {
                 // currentLine holds the most recent line read from the file
@@ -210,8 +209,6 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                 if (file.length() != 0) {
                     scanner.nextLine();
                 }
-
-                System.out.println("scanner.hasNextLine() " + scanner.hasNextLine());
 
                 while (scanner.hasNextLine()) {
 
@@ -450,11 +447,10 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         // We need to turn a Order object into a line of text for our file.
         // For example, we need an in memory object to end up like this:
         // chips::2.50::10
-//        System.out.println("marshallOrder ~> write to file " + aOrder.getCustomerName() + " , " + aOrder.getOrderNumber());
+
         // It's not a complicated process. Just get out each property,
         // and concatenate with our DELIMITER as a kind of spacer.
         // Start with the order id, since that's supposed to be first.
-
         if (aOrder.getOrderNumber() > MAX_ORDER_NUMBER) {
 
             MAX_ORDER_NUMBER = aOrder.getOrderNumber() + 1;
@@ -619,7 +615,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
                 //check for duplicates for list
                 for (Order p : orders) {
                     //if order number in list  == order number in file
-                    if (p.getOrderNumber() == (Integer.parseInt(orderTokens[0]))) {
+                    if (p.getOrderNumber() == (Integer.parseInt(orderTokens[0].trim()))) {
 
                         //no need to add it
                         return null;
@@ -642,31 +638,32 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
         try {
             //create order object
-            Integer orderNumber = Integer.parseInt(orderTokens[0]);
+            Integer orderNumber = Integer.parseInt(orderTokens[0].trim());
 
             if (orderNumber > MAX_ORDER_NUMBER) {
                 MAX_ORDER_NUMBER = orderNumber;
             }
-            String customerName = orderTokens[1];
+            String customerName = orderTokens[1].matches("[A-Za-z0-9,. ]+") ? orderTokens[1] : orderTokens[1].replaceAll("[^a-zA-Z0-9]", "").trim();
             String state = orderTokens[2];
-            BigDecimal taxRate = new BigDecimal(orderTokens[3]);
+            BigDecimal taxRate = new BigDecimal(orderTokens[3]).setScale(2, RoundingMode.CEILING);
             String orderType = orderTokens[4];
-            BigDecimal area = new BigDecimal(orderTokens[5]);
-            BigDecimal costPerSquareFoot = new BigDecimal(orderTokens[6]);
-            BigDecimal laborCostPerSquareFoot = new BigDecimal(orderTokens[7]);
-            BigDecimal materialCost = new BigDecimal(orderTokens[8]);
-            BigDecimal laborCost = new BigDecimal(orderTokens[9]);
-            BigDecimal tax = new BigDecimal(orderTokens[10]);
-            BigDecimal total = new BigDecimal(orderTokens[11]);
+            BigDecimal area = new BigDecimal(orderTokens[5]).setScale(2, RoundingMode.CEILING);
+            BigDecimal costPerSquareFoot = new BigDecimal(orderTokens[6]).setScale(2, RoundingMode.CEILING);
+            BigDecimal laborCostPerSquareFoot = new BigDecimal(orderTokens[7]).setScale(2, RoundingMode.CEILING);
+            BigDecimal materialCost = new BigDecimal(orderTokens[8]).setScale(2, RoundingMode.CEILING);
+            BigDecimal laborCost = new BigDecimal(orderTokens[9]).setScale(2, RoundingMode.CEILING);
+            BigDecimal tax = new BigDecimal(orderTokens[10]).setScale(2, RoundingMode.CEILING);
+            BigDecimal total = new BigDecimal(orderTokens[11]).setScale(2, RoundingMode.CEILING);
 
             orderFromFile = new Order(orderNumber, customerName, state, taxRate, orderType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, tax, total);
         } catch (Exception e) {
 
+            System.out.println(" e " + e.getMessage());
             count++;
 
             if (count <= 1) {
                 System.out.println("");
-                System.out.println("Unable to load order #" + orderTokens[0] + ", it has been removed from inventory");
+                System.out.println("Unable to load order #" + orderTokens[0] + " by  " + orderTokens[1] + " , it has been removed from inventory");
             }
 
         }

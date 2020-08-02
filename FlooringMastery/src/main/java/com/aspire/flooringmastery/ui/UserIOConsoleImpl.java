@@ -204,10 +204,17 @@ public class UserIOConsoleImpl implements UserIO {
                     continue;
                 } else {
 
+                    if (results[2].length() < 4 || results[2].length() > 4) {
+                        this.print("Please enter a correct year format");
+                        continue;
+
+                    }
+
                     //1-12
                     month = Integer.parseInt(results[0]);
                     //1-31
                     day = Integer.parseInt(results[1]);
+
                     year = Integer.parseInt(results[2]);
 
                     String DigitMonth = String.format("%02d", month);
@@ -257,6 +264,12 @@ public class UserIOConsoleImpl implements UserIO {
                     this.print("Please enter the correct date format");
                     continue;
                 } else {
+
+                    if (results[2].length() < 4 || results[2].length() > 4) {
+                        this.print("Please enter a correct year format");
+                        continue;
+
+                    }
 
                     month = Integer.parseInt(results[0]);
                     day = Integer.parseInt(results[1]);

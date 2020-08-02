@@ -7,9 +7,11 @@ package com.aspire.flooringmastery.ui;
 
 import com.aspire.flooringmastery.model.Order;
 import com.aspire.flooringmastery.model.Product;
+import com.aspire.flooringmastery.util.TableGenerator;
 import com.aspire.flooringmastery.util.Util;
 import static java.lang.Integer.parseInt;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 public class FlooringMasteryView {
 
     UserIO io;
+    private TableGenerator tblg = new TableGenerator();
 
     @Autowired
     public FlooringMasteryView(UserIO io) {
@@ -46,16 +49,36 @@ public class FlooringMasteryView {
 
     }
 
+    private List<String> createHeader(String col1, String col2, String col3, String col4, String col5, String col6, String col7, String col8,
+            String col9, String col10, String col11, String col12) {
+        List<String> headersListA = new ArrayList<>();
+
+        if ((headersListA.isEmpty())) {
+            headersListA.add(col1);
+            headersListA.add(col2);
+            headersListA.add(col3);
+            headersListA.add(col4);
+            headersListA.add(col5);
+            headersListA.add(col6);
+            headersListA.add(col7);
+            headersListA.add(col8);
+            headersListA.add(col9);
+            headersListA.add(col10);
+            headersListA.add(col11);
+            headersListA.add(col12);
+        }
+
+        return headersListA;
+
+    }
+
     public boolean displayFoundOrder(Order order, String orderDate, boolean askToDelete) {
 
         displayFoundOrder();
 
-        io.print("_________________________________________________________________________________________________________________________________________________________");
-        System.out.printf("|%13s|%18s|%5s|%10s|%10s|%10s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
-        io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------");
-
+        List<String> header = createHeader("OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
         //display order
-        displayOneOrder(order, orderDate);
+        displayOneOrder(order, orderDate, header);
 
         displaySpace();
 
@@ -63,24 +86,20 @@ public class FlooringMasteryView {
 
     }
 
-    private void displayOneOrder(Order order, String orderDate) {
+    private void displayOneOrder(Order order, String orderDate, List<String> header) {
 
         //date of order
         String dateOfOrder = orderDate;
-
         //customer name
         String customerName = order.getCustomerName();
         //state
         String state = order.getState();
         //state tax percentage
         String taxRate = Util.addPercentage(order.getTaxRate());
-
         //product type
         String area = Util.BigDecimalToString(order.getArea());
-
         //area of work to be done
         String productType = order.getProductType();
-
         //costPerSquareFoot
         String costPerSquareFoot = Util.appendToMoney(order.getCostPerSquareFoot());
         //laborCostPerSquareFoot
@@ -94,11 +113,37 @@ public class FlooringMasteryView {
         //total
         String total = Util.appendToMoney(order.getTotal());
 
-        //display products formatted
-        System.out.printf("|%13s|%18s|%5s|%10s|%11s|%10s|%12s|%16s|%12s|%13s|%10s|%10s| \n", dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
-        io.print("_________________________________________________________________________________________________________________________________________________________");
-        displaySpace();
+        createRow(header, dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
+
         io.print("Your order for " + productType + " with an area of " + area + " Sqft in " + state + " totaling in " + total + " was found.");
+    }
+
+    public void createRow(List<String> header, String orderIdentifier, String customerName, String state, String taxRate, String productType,
+            String area,
+            String costPerSquareFoot, String laborCostPerSquareFoot, String materialCost, String laborCost, String taxForWork,
+            String total) {
+        List<List<String>> rowsList = new ArrayList<>();
+
+        List<String> row = new ArrayList<>();
+
+        row.add(orderIdentifier);
+        row.add(customerName);
+        row.add(state);
+        row.add(taxRate);
+        row.add(productType);
+        row.add(area);
+        row.add(costPerSquareFoot);
+        row.add(laborCostPerSquareFoot);
+        row.add(materialCost);
+        row.add(laborCost);
+        row.add(taxForWork);
+        row.add(total);
+
+        rowsList.add(row);
+        io.print(tblg.generateTable(header, rowsList));
+
+        rowsList.removeAll(rowsList);
+        row.removeAll(row);
 
     }
 
@@ -171,7 +216,7 @@ public class FlooringMasteryView {
         //validate area
         BigDecimal area = getValidArea(order.getArea());
 
-        // ask area
+        //check if all values are empty  and return original order
         if (customerName.isEmpty() && state.isEmpty() && (productType == null) && (area == null)) {
             return order;
 
@@ -306,12 +351,13 @@ public class FlooringMasteryView {
 
         displayReviewOrder();
 
-        io.print("_______________________________________________________________________________________________________________________________________________________________");
-        System.out.printf("|%13s|%18s|%5s|%10s|%10s|%16s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
-        io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        List<String> header = createHeader("OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
 
+//        io.print("_______________________________________________________________________________________________________________________________________________________________");
+//        System.out.printf("|%13s|%18s|%5s|%10s|%17s|%16s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
+//        io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         //display orders
-        displayOrders(orderDetail, orderDate);
+        displayOrders(orderDetail, orderDate, header);
 
         displaySpace();
 
@@ -323,12 +369,10 @@ public class FlooringMasteryView {
 
         displayReviewOrder();
 
-        io.print("_________________________________________________________________________________________________________________________________________________________");
-        System.out.printf("|%13s|%18s|%5s|%10s|%10s|%16s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
-        io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------");
+        List<String> header = createHeader("OrderDate", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
 
         //display orders
-        displayOrders(orderDetail, orderDate);
+        displayOrders(orderDetail, orderDate, header);
 
         displaySpace();
 
@@ -336,7 +380,7 @@ public class FlooringMasteryView {
 
     }
 
-    private void displayOrders(Order orderDetail, String orderDate) {
+    private void displayOrders(Order orderDetail, String orderDate, List<String> header) {
 
         //date of order
         String dateOfOrder = orderDate;
@@ -367,9 +411,8 @@ public class FlooringMasteryView {
         //total
         String total = Util.appendToMoney(orderDetail.getTotal());
 
-        //display products formatted
-        System.out.printf("|%13s|%18s|%5s|%10s|%11s|%16s|%12s|%16s|%12s|%13s|%10s|%10s| \n", dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
-        io.print("_______________________________________________________________________________________________________________________________________________________________");
+        createRow(header, dateOfOrder, customerName, state, taxRate, productType, area, costPerSquareFoot, laborCostPerSquareFoot, materialCost, laborCost, taxForWork, total);
+
         displaySpace();
         io.print("Your " + dateOfOrder + " order for " + productType + " with an area of " + area + " Sqft in " + state + " will come to a total of " + total);
 
@@ -458,9 +501,9 @@ public class FlooringMasteryView {
     public void displayProducts(List<Product> products) {
         displayAvailableProducts();
         //display header for fields
-        io.print("___________________________________________________");
-        System.out.printf("|%5s|%13s|%10s|%8s| \n", "Choice", "ProductType", "CostPerSqFt", "LaborCostPerSqFt");
-        io.print("---------------------------------------------------");
+        io.print("_______________________________________________________________");
+        System.out.printf("|%5s|%25s|%10s|%8s| \n", "Choice", "ProductType", "CostPerSqFt", "LaborCostPerSqFt");
+        io.print("---------------------------------------------------------------");
         //initiize product
         Product p;
 
@@ -469,7 +512,7 @@ public class FlooringMasteryView {
             p = products.get(i);
             //display projecy
             displayProducts(i, p.getProductType(), p.getLaborCostPerSquareFoot(), p.getLaborCostPerSquareFoot());
-            io.print("___________________________________________________");
+            io.print("_______________________________________________________________");
         }
         displaySpace();
     }
@@ -486,7 +529,7 @@ public class FlooringMasteryView {
 
     private void displayProducts(int index, String ProductType, BigDecimal CostPerSqFt, BigDecimal LaborCostPerSqFt) {
         //display products formatted
-        System.out.printf("|%-6d|%13s|%11s|%16s|  \n", index + 1, ProductType, Util.appendToMoney(CostPerSqFt), Util.appendToMoney(LaborCostPerSqFt));
+        System.out.printf("|%-6d|%25s|%11s|%16s|  \n", index + 1, ProductType, Util.appendToMoney(CostPerSqFt), Util.appendToMoney(LaborCostPerSqFt));
     }
 
     public void displayDots() {
@@ -508,9 +551,10 @@ public class FlooringMasteryView {
 
         displayDayOrders(day);
         //display header for fields
-        io.print("_____________________________________________________________________________________________________________________________________________________________");
-        System.out.printf("| %5s|%18s|%5s|%10s|%10s|%16s|%12s|%12s|%10s|%13s|%10s|%10s| \n", "OrderNumber", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
-        io.print("-------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+        io.print("_________________________________________________________________________________________________________________________________________________________________________________________________________");
+        System.out.printf("| %5s|%25s|%5s|%10s|%27s|%18s|%12s|%12s|%10s|%17s|%17s|%17s| \n", "OrderNumber", "CustomerName", "State", "TaxRate", "ProductType", "Area", "CostPerSqft", "LaborCostPerSqft", "MaterialCost", "LaborCost", "Tax", "Total");
+        io.print("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         //initiize order
         Order o;
@@ -547,8 +591,8 @@ public class FlooringMasteryView {
         String total = Util.appendToMoney(order.getTotal());
 
         //display products formatted
-        System.out.printf("| %11d|%18s|%5s|%10s|%11s|%16s|%12s|%16s|%12s|%13s|%10s|%10s| \n", orderNumber, customerName, state, taxRate, productType, area, costPerSquareFoot, materialCost, laborCostPerSquareFoot, laborCost, tax, total);
-        io.print("_____________________________________________________________________________________________________________________________________________________________");
+        System.out.printf("| %11d|%25s|%5s|%10s|%27s|%18s|%12s|%16s|%12s|%17s|%17s|%17s| \n", orderNumber, customerName, state, taxRate, productType, area, costPerSquareFoot, materialCost, laborCostPerSquareFoot, laborCost, tax, total);
+        io.print("_________________________________________________________________________________________________________________________________________________________________________________________________________");
     }
 
     public void displayErrorMessage(String errorMsg) {
@@ -558,8 +602,6 @@ public class FlooringMasteryView {
         io.print("      *******************************      ");
         io.print("** " + errorMsg + " **");
         io.print("      *******************************      ");
-//        io.readString("Press Enter to continue");
-
         displayGoToMainMenu();
     }
 
