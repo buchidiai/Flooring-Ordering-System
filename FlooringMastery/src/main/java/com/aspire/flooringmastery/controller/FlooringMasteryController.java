@@ -129,7 +129,7 @@ public class FlooringMasteryController {
             //if yes
             if (orderToPlace) {
                 //add order
-                Order order = service.addOrder(orderDetails);
+                Order order = service.addOrder(orderDetails, orderDate);
 
                 view.displayAddOrderSucess(order.getOrderNumber(), orderDate);
 

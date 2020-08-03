@@ -40,7 +40,7 @@ public class FlooringMasteryOrderDaoStubImpl implements FlooringMasteryOrderDao 
     }
 
     @Override
-    public Order addOrder(Order order, Integer orderNumber) throws FlooringMasteryPersistenceException {
+    public Order addOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
 
         if (order.getOrderNumber().equals(onlyOrder.getOrderNumber())) {
             return onlyOrder;

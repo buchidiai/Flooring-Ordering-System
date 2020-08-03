@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface FlooringMasteryOrderDao {
 
-    Order addOrder(Order order, Integer orderId) throws FlooringMasteryPersistenceException;
+    Order addOrder(Order order, Integer orderId, String orderDate) throws FlooringMasteryPersistenceException;
 
     Order editOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException;
 

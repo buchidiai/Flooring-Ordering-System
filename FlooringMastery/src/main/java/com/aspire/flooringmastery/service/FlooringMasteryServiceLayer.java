@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface FlooringMasteryServiceLayer {
 
-    Order addOrder(Order order) throws FlooringMasteryInvalidProductTypeException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException;
+    Order addOrder(Order order, String orderDate) throws FlooringMasteryInvalidProductTypeException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringmasteryInvalidAreaException, FlooringMasteryPersistenceException;
 
     Order calculateCosts(Order order) throws FlooringMasteryInvalidProductTypeException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException;
 

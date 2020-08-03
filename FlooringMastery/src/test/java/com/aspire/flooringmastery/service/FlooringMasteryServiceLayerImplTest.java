@@ -155,6 +155,8 @@ public class FlooringMasteryServiceLayerImplTest {
     @Test
     public void testGetAllOrders() throws Exception {
         // ARRANGE
+        String orderDate = "08/05/2020";
+
         Order newOrder = new Order(3);
         newOrder.setCustomerName("CVS");
         newOrder.setProductType("Tile");
@@ -168,7 +170,7 @@ public class FlooringMasteryServiceLayerImplTest {
         newOrder.setTax(new BigDecimal("150.00"));
         newOrder.setTotal(new BigDecimal("10000.00"));
 
-        service.addOrder(newOrder);
+        service.addOrder(newOrder, orderDate);
 
         List<Order> allOrders = service.getAllOrders("07312020");
 
@@ -183,6 +185,8 @@ public class FlooringMasteryServiceLayerImplTest {
     @Test
     public void testAddOrder() {
         // ARRANGE
+
+        String orderDate = "08/05/2020";
         Order newOrder = new Order(3);
         newOrder.setCustomerName("CVS");
         newOrder.setProductType("Tile");
@@ -196,7 +200,7 @@ public class FlooringMasteryServiceLayerImplTest {
         newOrder.setTax(new BigDecimal("150.00"));
         newOrder.setTotal(new BigDecimal("10000.00"));
         try {
-            service.addOrder(newOrder);
+            service.addOrder(newOrder, orderDate);
 
         } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryCustomerNameException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException | FlooringmasteryInvalidAreaException e) {
             // ASSERT
@@ -209,6 +213,8 @@ public class FlooringMasteryServiceLayerImplTest {
     @Test
     public void testBlankCustomerName() {
         // ARRANGE
+
+        String orderDate = "08/05/2020";
         Order newOrder = new Order(3);
         newOrder.setCustomerName("");//~>
         newOrder.setProductType("Tile");
@@ -222,7 +228,7 @@ public class FlooringMasteryServiceLayerImplTest {
         newOrder.setTax(new BigDecimal("150.00"));
         newOrder.setTotal(new BigDecimal("10000.00"));
         try {
-            service.addOrder(newOrder);
+            service.addOrder(newOrder, orderDate);
             fail("Expected cutomer name exception.");
         } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException | FlooringmasteryInvalidAreaException e) {
             fail("Incorrect exception was thrown.");
@@ -235,6 +241,8 @@ public class FlooringMasteryServiceLayerImplTest {
     @Test
     public void testAllowedCustomerName() {
         // ARRANGE
+
+        String orderDate = "08/05/2020";
         Order newOrder = new Order(3);
         newOrder.setCustomerName("Mike, Inc. !@#$%^&*(");//~>
         newOrder.setProductType("Tile");
@@ -248,7 +256,7 @@ public class FlooringMasteryServiceLayerImplTest {
         newOrder.setTax(new BigDecimal("150.00"));
         newOrder.setTotal(new BigDecimal("10000.00"));
         try {
-            service.addOrder(newOrder);
+            service.addOrder(newOrder, orderDate);
             fail("Expected cutomer name exception.");
         } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException | FlooringmasteryInvalidAreaException e) {
             fail("Incorrect exception was thrown.");
@@ -261,6 +269,8 @@ public class FlooringMasteryServiceLayerImplTest {
     @Test
     public void testInvalidState() {
         // ARRANGE
+
+        String orderDate = "08/05/2020";
         Order newOrder = new Order(3);
         newOrder.setCustomerName("CVS");
         newOrder.setProductType("Tile");
@@ -276,7 +286,7 @@ public class FlooringMasteryServiceLayerImplTest {
 
         try {
 
-            service.addOrder(newOrder);
+            service.addOrder(newOrder, orderDate);
             fail("Expected invalid state exception.");
         } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryCustomerNameException | FlooringMasteryPersistenceException | FlooringmasteryInvalidAreaException e) {
             fail("Incorrect exception was thrown.");
@@ -290,6 +300,7 @@ public class FlooringMasteryServiceLayerImplTest {
     public void testInvalidArea() {
 
         // ARRANGE
+        String orderDate = "08/05/2020";
         Order newOrder = new Order(3);
         newOrder.setCustomerName("CVS");
         newOrder.setProductType("Tile");
@@ -305,7 +316,7 @@ public class FlooringMasteryServiceLayerImplTest {
 
         try {
 
-            service.addOrder(newOrder);
+            service.addOrder(newOrder, orderDate);
             fail("Expected invalid area exception");
         } catch (FlooringMasteryInvalidProductTypeException | FlooringMasteryCustomerNameException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException e) {
             fail("Incorrect exception was thrown.");
@@ -319,6 +330,7 @@ public class FlooringMasteryServiceLayerImplTest {
     public void testInvalidProductType() {
 
         // ARRANGE
+        String orderDate = "08/05/2020";
         Order newOrder = new Order(3);
         newOrder.setCustomerName("CVS");
         newOrder.setProductType("puppy");//~>
@@ -333,7 +345,7 @@ public class FlooringMasteryServiceLayerImplTest {
         newOrder.setTotal(new BigDecimal("10000.00"));
         try {
 
-            service.addOrder(newOrder);
+            service.addOrder(newOrder, orderDate);
             fail("Expected invalid Product type exception");
         } catch (FlooringMasteryCustomerNameException | FlooringMasteryInvalidStateException | FlooringMasteryPersistenceException | FlooringmasteryInvalidAreaException e) {
             fail("Incorrect exception was thrown.");

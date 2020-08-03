@@ -234,7 +234,7 @@ public class UserIOConsoleImpl implements UserIO {
                 continue;
             }
         }
-        System.out.println("response date return " + response);
+
         return response;
     }
 

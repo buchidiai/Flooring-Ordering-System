@@ -19,7 +19,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,10 +57,10 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     }
 
     @Override
-    public Order addOrder(Order OrderDetail, Integer orderNumber) throws FlooringMasteryPersistenceException {
+    public Order addOrder(Order OrderDetail, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
 
         //load orders of the day (not passed in date but actually day this order will be placed) and order will be added
-        loadOrders(Util.getTodaysDate());
+        loadOrders(orderDate);
 
         //create new object with id max id
         //max id is found when orders are loaded from loadOrders()
@@ -69,7 +68,7 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         //add order to list of orders
         orders.add(orderAdded);
         //write orders in memory to file of order_day.txt
-        writeOrder();
+        writeOrder(orderDate);
 
         //return order
         return orderAdded;
@@ -80,28 +79,25 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
         loadOrders(orderDate);
 
-        Order orderFound = null;
+//        Order orderFound = null;
+        Order orderFound = orders.stream().filter(o -> o.getOrderNumber().equals(orderNumber)).findFirst().get();
 
-        for (Order o : orders) {
+        if (orderFound != null) {
+            orderFound.setCustomerName(order.getCustomerName());
+            orderFound.setProductType(order.getProductType());
+            orderFound.setArea(order.getArea());
+            orderFound.setState(order.getState());
+            orderFound.setTaxRate(order.getTaxRate());
+            orderFound.setCostPerSquareFoot(order.getCostPerSquareFoot());
+            orderFound.setLaborCostPerSquareFoot(order.getLaborCostPerSquareFoot());
+            orderFound.setMaterialCost(order.getMaterialCost());
+            orderFound.setLaborCost(order.getLaborCost());
+            orderFound.setTax(order.getTax());
+            orderFound.setTotal(order.getTotal());
+            writeOrder(orderDate);
 
-            //find order with matching order number and return it
-            if (Objects.equals(o.getOrderNumber(), orderNumber)) {
-                o.setCustomerName(order.getCustomerName());
-                o.setProductType(order.getProductType());
-                o.setArea(order.getArea());
-                o.setState(order.getState());
-                o.setTaxRate(order.getTaxRate());
-                o.setCostPerSquareFoot(order.getCostPerSquareFoot());
-                o.setLaborCostPerSquareFoot(order.getLaborCostPerSquareFoot());
-                o.setMaterialCost(order.getMaterialCost());
-                o.setLaborCost(order.getLaborCost());
-                o.setTax(order.getTax());
-                o.setTotal(order.getTotal());
-                orderFound = o;
-                writeOrder(orderDate);
-                break;
-            }
         }
+
         return orderFound;
     }
 
@@ -109,14 +105,15 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
     public boolean removeOrder(Order order, Integer orderNumber, String orderDate) throws FlooringMasteryPersistenceException {
         loadOrders(orderDate);
         boolean removedOrder = false;
-        for (Order o : orders) {
-            if (Objects.equals(o.getOrderNumber(), orderNumber)) {
-                orders.remove(o);
-                removedOrder = true;
-                writeOrder(orderDate);
-                break;
-            }
+
+        Order orderFound = orders.stream().filter(o -> o.getOrderNumber().equals(orderNumber)).findFirst().get();
+
+        if (orderFound != null) {
+            orders.remove(orderFound);
+            removedOrder = true;
+            writeOrder(orderDate);
         }
+
         //return removed order
         return removedOrder;
     }
@@ -132,16 +129,8 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
 
         loadOrders(orderDate);
 
-        Order orderFound = null;
+        Order orderFound = orders.stream().filter(o -> o.getOrderNumber().equals(orderNumber)).findFirst().get();
 
-        for (Order o : orders) {
-            //find order with matching order number and return it
-            if (Objects.equals(o.getOrderNumber(), orderNumber)) {
-                orderFound = o;
-                break;
-            }
-        }
-        //return found order
         return orderFound;
     }
 
@@ -378,27 +367,26 @@ public class FlooringMasteryOrderDaoImpl implements FlooringMasteryOrderDao {
         }
     }
 
-    private void writeOrder() throws FlooringMasteryPersistenceException {
-//        System.out.println("ok write order to file from memory");
-        // date + .txt extension
-        String orderDate = Util.getTodaysDate() + ".txt";
-
-        //file object
-        File dir = new File(ORDER_FOLDER);
-
-        //check if directory exists
-        if (isExistingDir(dir)) {
-            //orders_file exists so add to it
-            writeOrderObject(orderDate);
-        } else {
-            //directory doesnt exist ~> create and add to file it
-            if (createDir(dir)) {
-                writeOrderObject(orderDate);
-            }
-
-        }
-    }
-
+//    private void writeOrder() throws FlooringMasteryPersistenceException {
+////        System.out.println("ok write order to file from memory");
+//        // date + .txt extension
+//        String orderDate = Util.getTodaysDate() + ".txt";
+//
+//        //file object
+//        File dir = new File(ORDER_FOLDER);
+//
+//        //check if directory exists
+//        if (isExistingDir(dir)) {
+//            //orders_file exists so add to it
+//            writeOrderObject(orderDate);
+//        } else {
+//            //directory doesnt exist ~> create and add to file it
+//            if (createDir(dir)) {
+//                writeOrderObject(orderDate);
+//            }
+//
+//        }
+//    }
     public void writeOrderObject(String orderDay) throws FlooringMasteryPersistenceException {
 //        System.out.println("ok Write to file from Memory");
         PrintWriter out;

@@ -1,0 +1,2 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+6,Chase Bank,TX,13.00,Wood,100.00,3.50,4.15,1050.00,1245.00,573.75,2868.75

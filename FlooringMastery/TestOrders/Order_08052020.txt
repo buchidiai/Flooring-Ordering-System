@@ -1,0 +1,5 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+2,JVC BANK,CA,25.00,Tile,300.00,3.50,4.15,1050.00,1245.00,573.75,2868.75
+6,JVC BANK,CA,25.00,Tile,300.00,3.50,4.15,1050.00,1245.00,573.75,2868.75
+3,Union Bank,WA,13.00,Tile,140.00,3.50,4.15,1050.00,1245.00,573.75,2868.75
+6,JVC BANK,CA,25.00,Tile,300.00,3.50,4.15,1050.00,1245.00,573.75,2868.75

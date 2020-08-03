@@ -13,7 +13,6 @@ import com.aspire.flooringmastery.dao.FlooringMasteryTaxDao;
 import com.aspire.flooringmastery.model.Order;
 import com.aspire.flooringmastery.model.Product;
 import com.aspire.flooringmastery.model.Tax;
-import com.aspire.flooringmastery.util.Util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -44,9 +43,9 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
     }
 
     @Override
-    public Order addOrder(Order order) throws FlooringMasteryInvalidProductTypeException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
+    public Order addOrder(Order order, String orderDate) throws FlooringMasteryInvalidProductTypeException, FlooringMasteryCustomerNameException, FlooringMasteryInvalidStateException, FlooringMasteryPersistenceException, FlooringmasteryInvalidAreaException {
 
-        Integer orderNumber = orderDao.getMaxOrderNumber(Util.getTodaysDate());
+        Integer orderNumber = orderDao.getMaxOrderNumber(orderDate);
 
         //validate customer name
         validateCustomerName(order.getCustomerName());
@@ -59,7 +58,7 @@ public class FlooringMasteryServiceLayerImpl implements FlooringMasteryServiceLa
         //validate product
         validateProductType(order.getProductType());
 
-        Order orderToAdd = orderDao.addOrder(order, orderNumber);
+        Order orderToAdd = orderDao.addOrder(order, orderNumber, orderDate);
         auditDao.writeAuditEntry(orderToAdd, "Add Order");
         return orderToAdd;
 

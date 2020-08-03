@@ -29,6 +29,7 @@ public class FlooringMasteryOrderDaoImplTest {
     Order orderToAdd2;
     Order orderToEdit;
     String currentDate = Util.getTodaysDate();
+    String orderDate = currentDate;
 
     public FlooringMasteryOrderDaoImplTest() {
     }
@@ -85,7 +86,8 @@ public class FlooringMasteryOrderDaoImplTest {
     //test all field when order is added
     @Test
     public void testAddOrderProductType() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
         // Check the data is equal
         assertEquals(orderToAdd1.getProductType(),
@@ -95,7 +97,8 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderCustomerName() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -107,7 +110,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderState() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -118,7 +121,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderTaxRate() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -129,7 +132,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderArea() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -140,7 +143,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderCostPerSquareFoot() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -151,7 +154,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderLaborCostPerSquareFoot() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -162,7 +165,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderMaterialCost() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -173,7 +176,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderLaborCost() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -184,7 +187,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderTaxForWorkDone() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -195,7 +198,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testAddOrderTotal() throws Exception {
-        Order orderAdded = testDao.addOrder(orderToAdd1, 1);
+        Order orderAdded = testDao.addOrder(orderToAdd1, 1, orderDate);
         //  -assert
 
         // Check the data is equal
@@ -207,7 +210,7 @@ public class FlooringMasteryOrderDaoImplTest {
     //test edit for the 5 changes made
     @Test
     public void testEditOrderCustomerName() throws Exception {
-        testDao.addOrder(orderToAdd1, 5);
+        testDao.addOrder(orderToAdd1, 5, orderDate);
         Order orderEditted = testDao.editOrder(orderToEdit, 6, currentDate);
 
         //  -assert
@@ -219,7 +222,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testEditOrderState() throws Exception {
-        testDao.addOrder(orderToAdd1, 5);
+        testDao.addOrder(orderToAdd1, 5, orderDate);
         Order orderEditted = testDao.editOrder(orderToEdit, 6, currentDate);
         //  -assert
 
@@ -231,7 +234,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testEditOrderTaxRate() throws Exception {
-        testDao.addOrder(orderToAdd1, 5);
+        testDao.addOrder(orderToAdd1, 5, orderDate);
         Order orderEditted = testDao.editOrder(orderToEdit, 6, currentDate);
         //  -assert
 
@@ -243,7 +246,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testEditOrderProductType() throws Exception {
-        testDao.addOrder(orderToAdd1, 5);
+        testDao.addOrder(orderToAdd1, 5, orderDate);
         Order orderEditted = testDao.editOrder(orderToEdit, 6, currentDate);
         //  -assert
 
@@ -255,7 +258,7 @@ public class FlooringMasteryOrderDaoImplTest {
 
     @Test
     public void testEditOrderArea() throws Exception {
-        testDao.addOrder(orderToAdd1, 5);
+        testDao.addOrder(orderToAdd1, 5, orderDate);
         Order orderEditted = testDao.editOrder(orderToEdit, 6, currentDate);
         //  -assert
 
@@ -268,7 +271,7 @@ public class FlooringMasteryOrderDaoImplTest {
     //remove order
     @Test
     public void testRemoveOrder() throws Exception {
-        Order order = testDao.addOrder(orderToAdd1, 1);
+        Order order = testDao.addOrder(orderToAdd1, 1, orderDate);
         boolean orderRemoved = testDao.removeOrder(orderToAdd1, order.getOrderNumber(), currentDate);
         //  -assert
         // Check the data is equal
@@ -279,7 +282,7 @@ public class FlooringMasteryOrderDaoImplTest {
     //get order
     @Test
     public void testGetOrder() throws Exception {
-        Order order = testDao.addOrder(orderToAdd1, 1);
+        Order order = testDao.addOrder(orderToAdd1, 1, orderDate);
 
         Order found = testDao.getOrder(currentDate, 2);
 
@@ -293,8 +296,8 @@ public class FlooringMasteryOrderDaoImplTest {
     //get all orders
     @Test
     public void testGetAllOrders() throws Exception {
-        Order order1 = testDao.addOrder(orderToAdd1, 1);
-        Order order2 = testDao.addOrder(orderToAdd2, 2);
+        Order order1 = testDao.addOrder(orderToAdd1, 1, orderDate);
+        Order order2 = testDao.addOrder(orderToAdd2, 2, orderDate);
 
         // Retrieve the list of all orders within the DAO
         List<Order> allorders = testDao.getAllOrders(Util.getTodaysDate());
